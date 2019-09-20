@@ -1,0 +1,52 @@
+{
+  "name": "dognews_review_app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "npx react-native start",
+    "test": "npx jest",
+    "lint": "npx eslint .",
+    "pretty": "npx prettier --write '{app,lib,__tests__,__mocks__}/**/*.{js,jsx,ts,tsx}'",
+    "bundle-android": "npx react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
+    "bundle-ios": "npx react-native bundle --entry-file index.ios.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
+    "fontawesome": "cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.136",
+    "cd": "^0.3.3",
+    "lodash": "^4.17.15",
+    "prop-types": "^15.7.2",
+    "react": "16.8.6",
+    "react-native": "0.60.4",
+    "react-native-animatable": "^1.3.2",
+    "react-native-collapsible": "^1.5.1",
+    "react-native-gesture-handler": "^1.3.0",
+    "react-native-vector-icons": "^6.6.0",
+    "react-native-webview": "^6.9.0",
+    "react-navigation": "^3.11.1",
+    "react-zlib-js": "^1.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "7.5.5",
+    "@babel/runtime": "7.5.5",
+    "@react-native-community/eslint-config": "0.0.3",
+    "@types/jest": "^24.0.17",
+    "@types/react": "^16.9.1",
+    "@types/react-native": "^0.60.3",
+    "@types/react-native-collapsible": "^0.11.0",
+    "babel-eslint": "^10.0.2",
+    "babel-jest": "24.8.0",
+    "eslint": "^6.1.0",
+    "eslint-plugin-jest": "^22.15.0",
+    "eslint-plugin-react": "^7.14.3",
+    "jest": "24.8.0",
+    "metro-react-native-babel-preset": "0.54.1",
+    "prettier": "^1.18.2",
+    "react-native-cli": "^2.0.1",
+    "react-test-renderer": "16.8.6",
+    "typescript": "^3.5.3"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
