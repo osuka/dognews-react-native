@@ -39,6 +39,7 @@ export function ArticleListScreen(props: NavigationScreenProps) {
             item={item}
             positionInList={index}
             totalItems={articles.articleStorage.itemList.length}
+            onArticleClick={(item) => props.navigation.navigate('ArticleWebView', { item })}
           />
         )}
         ItemSeparatorComponent={ItemSeparator}

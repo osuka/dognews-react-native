@@ -17,7 +17,6 @@ import { Rating } from './Rating'
 // and rm -rf android/app/build
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { Item, ArticleControl, NewsItemRating } from '../services/articles'
-import { withNavigation, NavigationInjectedProps } from 'react-navigation'
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -42,16 +41,15 @@ function ArticleItem({
   item,
   positionInList,
   totalItems,
-  navigation,
+  onArticleClick,
 }: {
   item: Item
   positionInList: number
-  totalItems: number
-} & NavigationInjectedProps) {
+  totalItems: number,
+  onArticleClick: (Item) => boolean,
+}) {
   const articles = ArticleControl()
   const [collapsed, setCollapsed] = React.useState(true)
-
-  const openUrl = () => navigation.navigate('ArticleWebView', { item })
 
   const toggleCollapsed = () => {
     LayoutAnimation.configureNext(layoutAnimationAppear)
@@ -184,7 +182,9 @@ function ArticleItem({
 
         {rating >= 0 && (
           <View style={{ flexDirection: 'row', padding: 2 }}>
-            <TouchableOpacity style={{ flex: 1 }} onPress={openUrl}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={(item) => {
+              onArticleClick(item);
+            }}>
               <Text
                 style={{
                   color: Palette.mainForeground,
@@ -212,4 +212,4 @@ function ArticleItem({
   return React.useMemo(articleComponent, [item.id, flatRatings, collapsed])
 }
 
-export const NewsItem = withNavigation(ArticleItem)
+export const NewsItem = ArticleItem;
