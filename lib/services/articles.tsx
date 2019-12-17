@@ -63,6 +63,7 @@ export function ArticleControl(): {
   articleStorage: ArticleStorage
   rateItem: (item: Item, value?: number) => void
   getItemUserRating: (item: Item) => number
+  removeItem: (item: Item) => void
 } {
   const articleStorage = React.useContext(ArticleContext)
 
@@ -152,10 +153,19 @@ export function ArticleControl(): {
     articleStorage.setItemList(articleStorage.itemList.slice())
   }
 
+  const removeItem = (item: Item, value?: number) => {
+    articleStorage.setItemList(
+      [].concat(
+        articleStorage.itemList.filter((value) => value.id !== item.id),
+      ),
+    )
+  }
+
   return {
     fetchNews,
     articleStorage,
     rateItem,
     getItemUserRating,
+    removeItem,
   }
 }

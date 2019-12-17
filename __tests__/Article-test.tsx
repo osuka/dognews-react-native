@@ -4,14 +4,14 @@
 
 import 'react-native'
 import React from 'react'
-import { NewsItem } from '../lib/components/Article'
+import { Article } from '../lib/ui/Article'
 
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer'
 
 it('renders correctly', () => {
   renderer.create(
-    <NewsItem
+    <Article
       item={{
         id: 'myuniqueid',
         url: 'https://duckduckgo.com',

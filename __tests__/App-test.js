@@ -10,5 +10,10 @@ import App from '../App'
 import renderer from 'react-test-renderer'
 
 it('renders correctly', () => {
+  // note: there is a mock for react-native-gesture-handler
+  //     - otherwise it'll throw 'Cannot read property 'Direction' of undefined'
+  // check jest.config.js (setupFiles)
+  //  general.ts, node_modules/react-native-gesture-handler/.../jestSetup.js
+  // https://github.com/software-mansion/react-native-gesture-handler/issues/344
   renderer.create(<App />)
 })

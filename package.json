@@ -22,7 +22,7 @@
     "react-native-collapsible": "1.x",
     "react-native-gesture-handler": "1.x",
     "react-native-vector-icons": "6.x.x",
-    "react-native-webview": "6.x.x",
+    "react-native-webview": "7.x.x",
     "react-navigation": "3.x.x",
     "react-zlib-js": "1.x.x"
   },
@@ -46,8 +46,5 @@
     "react-native-cli": "2.x.x",
     "react-test-renderer": "16.x.x",
     "typescript": "3.x.x"
-  },
-  "jest": {
-    "preset": "react-native"
   }
 }

@@ -37,7 +37,7 @@ const layoutAnimationAppear = LayoutAnimation.create(60, 'easeIn', 'opacity')
 
 // This is a functional component - combined with useState it bypasses the need to use 'this' completely
 // while still allowing type safety at compile time
-function ArticleItem({
+export function Article({
   item,
   positionInList,
   totalItems,
@@ -211,5 +211,3 @@ function ArticleItem({
   const flatRatings = _.flatMapDeep(item.ratings).join(',') // not sure if arrays are compared as values
   return React.useMemo(articleComponent, [item.id, flatRatings, collapsed])
 }
-
-export const NewsItem = ArticleItem;

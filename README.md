@@ -57,7 +57,9 @@ npm run fontawesome
 
 > Note that this runs a script from package.json `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 
-#### React native recommends having [watchman](https://facebook.github.io/watchman/) installed. The installation in Linux is as follows:
+#### React native recommends having [watchman](https://facebook.github.io/watchman/) installed
+
+The installation in Linux is as follows:
 
 ```sh
 git clone https://github.com/facebook/watchman.git
@@ -87,9 +89,8 @@ More here in the [official guide](https://facebook.github.io/react-native/docs/r
 * Have an Android emulator running (quickest way to get started), or a device connected.
 * `npx react-native run-android`
 
-> If it fails, remember to make java 1.8 the selected one, run `jenv local 1.8` before.
-
-> If it says `> com.android.builder.testing.api.DeviceException: No connected devices!` use Android Studio to launch a simulator, or plug one in.
+> * If it fails, remember to make java 1.8 the selected one, run `jenv local 1.8` before.
+> * If it says `> com.android.builder.testing.api.DeviceException: No connected devices!` use Android Studio to launch a simulator, or plug one in.
 
 ### Run instructions from Visual Studio Code (Android / iOS)
 

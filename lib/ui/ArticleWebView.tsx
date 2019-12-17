@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { Palette } from './Article'
+import { Palette } from './Palette'
 import { Item, ArticleControl } from '../services/articles'
-import { View, Text, Button } from 'react-native'
 import { WebView } from 'react-native-webview'
+import { View, Text, Button } from 'react-native'
 import { NavigationScreenProps } from 'react-navigation'
 
 import Icon from 'react-native-vector-icons/FontAwesome5'

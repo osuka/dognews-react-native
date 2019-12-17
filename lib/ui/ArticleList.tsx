@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { FlatList, Button, View } from 'react-native'
 import { Item, ArticleControl } from '../services/articles'
-import { NewsItem } from './Article'
+import { Article } from './Article'
 import { NavigationScreenProps } from 'react-navigation'
 
 const ItemSeparator = () => {
@@ -34,7 +34,7 @@ export function ArticleListScreen(props: NavigationScreenProps) {
       <FlatList
         data={articles.articleStorage.itemList}
         renderItem={({ item, index }: { item: Item; index: number }) => (
-          <NewsItem
+          <Article
             key={item.id}
             item={item}
             positionInList={index}
