@@ -1,4 +1,4 @@
-package com.dognews_review_app;
+package com.onlydognews.dognewsreviewapp;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "dognews_review_app";
+        return "dognewsreviewapp";
     }
 }

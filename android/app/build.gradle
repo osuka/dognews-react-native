@@ -128,11 +128,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.dognews_review_app"
+        applicationId "com.onlydognews.dognewsreviewapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [ appAuthRedirectScheme: "com.onlydognews.dognewsreviewapp" ]
     }
     splits {
         abi {

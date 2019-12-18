@@ -1,4 +1,6 @@
 // <rootDir>/jest.config.js
+/* global module */
+
 module.exports = {
   verbose: true,
   preset: 'react-native',
@@ -6,6 +8,7 @@ module.exports = {
   setupFiles: [
     '<rootDir>/__setup__/general.ts',
     '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js',
+    '<rootDir>/__setup__/okta.js'
   ],
 
   // during jest runs, react-navigation tries to load a png with importand jest intercepts it
@@ -15,9 +18,11 @@ module.exports = {
       'identity-obj-proxy',
   },
 
+  // By default jest doesn't transform ES6 js code from node_modules, we need to tell it to
+  // do it for some (ie 'ignore all but these')
   "transformIgnorePatterns": [
-    // if this is not provided, it will throw error on finding 'Import' as this module is not
-    // precompiled to node-compatible js
-    "node_modules/react-navigation/"
-  ]
-}
+    "node_modules/(?!react-native|react-navigation|@okta)/"
+  ],
+
+  automock: false
+};

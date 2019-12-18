@@ -1,0 +1,10 @@
+export default {
+  oidc: {
+    clientId: '<CLIENTID>',
+    redirectUri: 'com.onlydognews.dognewsreviewapp:/callback',
+    endSessionRedirectUri: 'com.onlydognews.dognewsreviewapp:/callback',
+    discoveryUri: '<SERVER>/oauth2/default',
+    scopes: ['openid', 'profile', 'offline_access'],
+    requireHardwareBackedKeyStore: false,
+  },
+};

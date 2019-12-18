@@ -1,4 +1,4 @@
-package com.dognews_review_app;
+package com.onlydognews.dognewsreviewapp;
 
 import android.app.Application;
 import android.util.Log;

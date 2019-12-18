@@ -1,50 +1,73 @@
 {
-  "name": "dognews_review_app",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "npx react-native start",
-    "test": "npx jest",
-    "lint": "npx eslint .",
-    "pretty": "npx prettier --write '{app,lib,__tests__,__mocks__}/**/*.{js,jsx,ts,tsx}'",
-    "bundle-android": "npx react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
-    "bundle-ios": "npx react-native bundle --entry-file index.ios.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
-    "fontawesome": "cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/"
-  },
-  "dependencies": {
-    "@types/lodash": "4.x",
-    "cd": "0.3.x",
-    "lodash": "4.x.x",
-    "prop-types": "15.x.x",
-    "react": "16.x.x",
-    "react-native": "0.x",
-    "react-native-animatable": "1.x",
-    "react-native-collapsible": "1.x",
-    "react-native-gesture-handler": "1.x",
-    "react-native-vector-icons": "6.x.x",
-    "react-native-webview": "7.x.x",
-    "react-navigation": "3.x.x",
-    "react-zlib-js": "1.x.x"
-  },
-  "devDependencies": {
-    "@babel/core": "7.x.x",
-    "@babel/runtime": "7.x.x",
-    "@react-native-community/eslint-config": "0.x.x",
-    "@types/jest": "24.x.x",
-    "@types/react": "16.x.x",
-    "@types/react-native": "0.x",
-    "@types/react-native-collapsible": "0.x.x",
-    "babel-eslint": "10.x.x",
-    "babel-jest": "24.x.x",
-    "eslint": "6.x.x",
-    "eslint-plugin-jest": "22.x.x",
-    "eslint-plugin-react": "7.x.x",
-    "eslint-utils": "^1.4.2",
-    "jest": "24.x.x",
-    "metro-react-native-babel-preset": "0.54.x",
-    "prettier": "1.x.x",
-    "react-native-cli": "2.x.x",
-    "react-test-renderer": "16.x.x",
-    "typescript": "3.x.x"
-  }
+    "name": "dognewsreviewapp",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "npx react-native start",
+        "test": "npx jest",
+        "lint": "npx eslint .",
+        "pretty": "npx prettier --write '{app,lib,__tests__,__mocks__}/**/*.{js,jsx,ts,tsx}'",
+        "bundle-android": "npx react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
+        "bundle-ios": "npx react-native bundle --entry-file index.ios.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios",
+        "fontawesome": "cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/"
+    },
+    "dependencies": {
+        "@okta/okta-react-native": "1.3.0",
+        "@types/lodash": "4.x",
+        "cd": "0.3.x",
+        "lodash": "4.x.x",
+        "prop-types": "15.x.x",
+        "react": "16.x.x",
+        "react-native": "0.x",
+        "react-native-animatable": "1.x",
+        "react-native-collapsible": "1.x",
+        "react-native-gesture-handler": "1.x",
+        "react-native-securerandom": "^1.0.0-rc.0",
+        "react-native-vector-icons": "6.x.x",
+        "react-native-webview": "7.x.x",
+        "react-navigation": "3.x.x",
+        "react-zlib-js": "1.x.x"
+    },
+    "devDependencies": {
+        "@angular-devkit/schematics-cli": "^0.803.20",
+        "@babel/core": "7.x.x",
+        "@babel/runtime": "7.x.x",
+        "@oktadev/schematics": "^1.1.1",
+        "@react-native-community/eslint-config": "0.x.x",
+        "@types/jest": "24.x.x",
+        "@types/react": "16.x.x",
+        "@types/react-native": "0.x",
+        "@types/react-native-collapsible": "0.x.x",
+        "babel-eslint": "10.x.x",
+        "babel-jest": "24.x.x",
+        "enzyme": "3.10.0",
+        "enzyme-adapter-react-16": "1.15.1",
+        "enzyme-async-helpers": "0.9.1",
+        "eslint": "6.x.x",
+        "eslint-plugin-jest": "22.x.x",
+        "eslint-plugin-react": "7.x.x",
+        "eslint-utils": "^1.4.2",
+        "identity-obj-proxy": "^3.0.0",
+        "jest": "24.x.x",
+        "metro-react-native-babel-preset": "0.54.x",
+        "prettier": "1.x.x",
+        "react-dom": "16.12.0",
+        "react-native-cli": "2.x.x",
+        "react-test-renderer": "16.x.x",
+        "typescript": "3.x.x"
+    },
+    "jest": {
+        "preset": "react-native",
+        "automock": false,
+        "transformIgnorePatterns": [
+            "node_modules/(?!@okta|react-native)"
+        ],
+        "testMatch": [
+            "**/tests/*.js?(x)",
+            "**/?(*.)(spec|test).js?(x)"
+        ],
+        "setupFiles": [
+            "./setupJest.js"
+        ]
+    }
 }
