@@ -5,6 +5,8 @@ import { createStackNavigator } from 'react-navigation';
 import { ArticleListScreen } from './lib/ui/ArticleList';
 import { ArticleWebViewScreen } from './lib/ui/ArticleWebView';
 import Auth from './Auth' // okta
+import LoginScreen from './lib/auth/LoginScreen';
+// import ProfileScreen from './lib/auth/ProfileScreen';
 
 const HomeScreen = (props) => {
   return (
@@ -13,7 +15,6 @@ const HomeScreen = (props) => {
         title="Article Queue"
         onPress={() => props.navigation.navigate('Articles', {})}
       />
-      <Auth />
     </ScrollView>
   );
 };
@@ -22,8 +23,10 @@ HomeScreen.navigationOptions = {
 };
 
 export const MainNavigator = createStackNavigator({
+  LoginScreen: {screen: LoginScreen},
   Home: { screen: HomeScreen },
   Articles: { screen: ArticleListScreen },
   ArticleWebView: { screen: ArticleWebViewScreen },
+  // Profile: {screen: ProfileScreen}
 });
 

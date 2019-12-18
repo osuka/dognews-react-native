@@ -177,11 +177,13 @@ The best resource for this is [Matt Raible's React Native Login entry at okta](h
 
 After trying the default django authentication I'm moving to using [okta](https://www.okta.com/) for identity. You can register as a developer with a maximum of 1000 unique users per month which seems more than enough for this little app.
 
+Here I'm using Matt's tool to speed up the process.
+
 npm install --save-dev @angular-devkit/schematics-cli  # code generator from the Angular project
 npm i --save-dev @oktadev/schematics
 npx schematics @oktadev/schematics:add-auth
 
-> Asks: What is your OIDC app's issuer URL? This is found in  API > Authorization Server, I pick the default one [https://dev-142820.okta.com/oauth2/default](https://dev-142820.okta.com/oauth2/default)
+> Asks: What is your OIDC app's issuer URL? This is found in  API > Authorization Server, I pick the default one, than links to xxx/oauth2/default
 > Asks: What is your OIDC app's client ID? This is found in Applications
 
 After this it starts generating pages:
@@ -251,3 +253,10 @@ Need to ajust this, as by default it had a dev-xxxx url:
 UPDATE /App.js (3152 bytes)
   It wipes our App.js and replaces it with a demo login page. I roll back.
   The only thing it does is `import ./Auth` and add `<Auth />` in the page.
+
+## Migrating to custom Okta login page
+
+Matt redirects to this example of a [custom login page that doesn't open a web browser](https://github.com/okta/samples-js-react-native/tree/master/custom-sign-in), which
+is the default experience. That example contains a [Login Screen component](https://github.com/okta/samples-js-react-native/blob/master/custom-sign-in/app/LoginScreen.js) and a [Profile Screen component](https://github.com/okta/samples-js-react-native/blob/master/custom-sign-in/app/ProfileScreen.js) and needs a couple of packages: react-native-loading-spinner-overlay and @okta/okta-auth-js. This seems to be a simple user/password login bypassing oauth2.
+
+For a solution that uses okta as an oauth2 provider we'll follow https://scotch.io/tutorials/build-a-react-native-app-and-authenticate-with-oauth-20
