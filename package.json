@@ -12,7 +12,6 @@
         "fontawesome": "cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/"
     },
     "dependencies": {
-        "@okta/okta-react-native": "1.3.0",
         "@types/lodash": "4.x",
         "cd": "0.3.x",
         "lodash": "4.x.x",
@@ -20,6 +19,7 @@
         "react": "16.x.x",
         "react-native": "0.x",
         "react-native-animatable": "1.x",
+        "react-native-app-auth": "^4.4.0",
         "react-native-collapsible": "1.x",
         "react-native-gesture-handler": "1.x",
         "react-native-securerandom": "^1.0.0-rc.0",
@@ -29,10 +29,8 @@
         "react-zlib-js": "1.x.x"
     },
     "devDependencies": {
-        "@angular-devkit/schematics-cli": "^0.803.20",
         "@babel/core": "7.x.x",
         "@babel/runtime": "7.x.x",
-        "@oktadev/schematics": "^1.1.1",
         "@react-native-community/eslint-config": "0.x.x",
         "@types/jest": "24.x.x",
         "@types/react": "16.x.x",
@@ -40,9 +38,6 @@
         "@types/react-native-collapsible": "0.x.x",
         "babel-eslint": "10.x.x",
         "babel-jest": "24.x.x",
-        "enzyme": "3.10.0",
-        "enzyme-adapter-react-16": "1.15.1",
-        "enzyme-async-helpers": "0.9.1",
         "eslint": "6.x.x",
         "eslint-plugin-jest": "22.x.x",
         "eslint-plugin-react": "7.x.x",
@@ -51,7 +46,6 @@
         "jest": "24.x.x",
         "metro-react-native-babel-preset": "0.54.x",
         "prettier": "1.x.x",
-        "react-dom": "16.12.0",
         "react-native-cli": "2.x.x",
         "react-test-renderer": "16.x.x",
         "typescript": "3.x.x"
@@ -60,7 +54,7 @@
         "preset": "react-native",
         "automock": false,
         "transformIgnorePatterns": [
-            "node_modules/(?!@okta|react-native)"
+            "node_modules/react-native"
         ],
         "testMatch": [
             "**/tests/*.js?(x)",

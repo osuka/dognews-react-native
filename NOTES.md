@@ -251,3 +251,70 @@ Need to ajust this, as by default it had a dev-xxxx url:
 UPDATE /App.js (3152 bytes)
   It wipes our App.js and replaces it with a demo login page. I roll back.
   The only thing it does is `import ./Auth` and add `<Auth />` in the page.
+
+> ^ the above is in commit e5ae41d41a45913abf755196830b73dd5ed10313
+
+## Migrating to use a generic oauth2 integration
+
+After adding the previous code, there are numerous links to Okta which could make moving to another oauth provider hard.
+For a solution that uses okta as an oauth2 provider we'll follow [Formidable Lab's guide on the react-native-app-auth repo](https://github.com/FormidableLabs/react-native-app-auth)
+First we undo all that was done in the previous section: removal of all @okta packages etc.
+
+* Install the auth library
+
+```bash
+npm i --save react-native-app-auth
+react-native link
+```
+
+* Register the native part of the library for iOS
+
+Add this to `Podfile`
+
+```txt
+pod 'AppAuth', '>= 0.94'
+```
+
+* Register the redirect URL scheme
+
+This is needed since iOS 10. We need to add a mapping for the schema of our app to Info.plist in iOS:
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+<dict>
+  <key>CFBundleURLName</key>
+  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+  <key>CFBundleURLSchemes</key>
+  <array>
+    <string>com.onlydognews.dognewsreviewapp</string>
+  </array>
+</dict>
+</array>
+```
+
+* Define openURL callback in AppDelegate
+
+Register the OpenID authorization flow in `AppDelegate.h` (added the RNAppAuthAuthorizationFlowManager paramater to the AppDelegate @protocol entry and the authorizationFlowManagerDelegate @property):
+
+```objectivec
+#import <React/RCTBridgeDelegate.h>
+#import <UIKit/UIKit.h>
+#import "RNAppAuthAuthorizationFlowManager.h"
+@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate, RNAppAuthAuthorizationFlowManager>
+@property (nonatomic, strong) UIWindow *window;
+// oauth2
+@property(nonatomic, weak)id<RNAppAuthAuthorizationFlowManagerDelegate>authorizationFlowManagerDelegate;
+@end
+```
+
+The callback comes via openURL app delegate, so we register our delegate that will listen for it:
+
+```objectivec
+...
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *, id> *)options {
+ return [self.authorizationFlowManagerDelegate resumeExternalUserAgentFlowWithURL:url];
+}
+
+@end
+```

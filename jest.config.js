@@ -7,8 +7,7 @@ module.exports = {
   testPathIgnorePatterns: ['/node_modules/'],
   setupFiles: [
     '<rootDir>/__setup__/general.ts',
-    '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js',
-    '<rootDir>/__setup__/okta.js'
+    '<rootDir>/node_modules/react-native-gesture-handler/jestSetup.js'
   ],
 
   // during jest runs, react-navigation tries to load a png with importand jest intercepts it

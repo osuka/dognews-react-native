@@ -28,7 +28,7 @@ target 'dognews_checker' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-
+  pod 'AppAuth', '>= 0.94'
 
   target 'dognews_checkerTests' do
     inherit! :search_paths
