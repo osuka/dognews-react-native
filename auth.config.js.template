@@ -7,4 +7,7 @@ export default {
     scopes: ['openid', 'profile', 'offline_access'],
     requireHardwareBackedKeyStore: false,
   },
+  direct: {
+    baseUrl: 'http://10.0.2.2:8000'  // for android emulator, use localhost etc for local
+  }
 };

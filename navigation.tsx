@@ -7,6 +7,7 @@ import { ArticleListScreen } from './lib/ui/ArticleList';
 import { ArticleWebViewScreen } from './lib/ui/ArticleWebView';
 import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
 import authConfig from './auth.config';
+import { LoginScreenDirect } from './lib/ui/auth/LoginScreen';
 
 // =====================
 
@@ -18,8 +19,12 @@ const HomeScreen = (props) => {
         onPress={() => props.navigation.navigate('Articles', {})}
       />
       <Button
-        title="Login"
-        onPress={() => props.navigation.navigate('LoginScreen', {})}
+        title="Login with Okta"
+        onPress={() => props.navigation.navigate('LoginScreenOkta', {})}
+      />
+      <Button
+        title="Login directly"
+        onPress={() => props.navigation.navigate('LoginScreenDirect', {})}
       />
     </ScrollView>
   );
@@ -48,7 +53,7 @@ type State = {
  refreshToken: String
 };
 
-export class LoginScreen extends Component<{}, State> {
+export class LoginScreenOkta extends Component<{}, State> {
 
  state = {
    hasLoggedInOnce: false,
@@ -134,5 +139,6 @@ export const MainNavigator = createStackNavigator({
   Home: { screen: HomeScreen },
   Articles: { screen: ArticleListScreen },
   ArticleWebView: { screen: ArticleWebViewScreen },
-  LoginScreen: { screen: LoginScreen },
+  LoginScreenOkta: { screen: LoginScreenOkta },
+  LoginScreenDirect: { screen: LoginScreenDirect },
 });
