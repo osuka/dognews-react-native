@@ -7,6 +7,7 @@ import {
   Route,
   Link,
   Switch,
+  BackButton,
 } from 'react-router-native'
 import { LoginHome } from './lib/ui/auth/LoginScreen'
 import { ArticleList } from './lib/ui/articles/ArticleList'
@@ -20,6 +21,7 @@ const App = () => {
   return (
     <ArticleProvider>
       <Router>
+        <BackButton/>
         <View style={styles.nav}>
           <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
             <Text>Home</Text>
