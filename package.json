@@ -27,6 +27,7 @@
         "react-native-vector-icons": "6.x.x",
         "react-native-webview": "7.x.x",
         "react-navigation": "3.x.x",
+        "react-router-native": "^5.1.2",
         "react-zlib-js": "1.x.x"
     },
     "devDependencies": {

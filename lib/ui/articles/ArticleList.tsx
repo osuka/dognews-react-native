@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react'
-import { FlatList, Button, View } from 'react-native'
-import { Item, ArticleControl } from '../services/articles'
+import { FlatList, Button, View, Text } from 'react-native'
+import { Item, ArticleControl } from '../../services/articles'
 import { Article } from './Article'
-import { NavigationScreenProps } from 'react-navigation'
+import { createStackNavigator, NavigationScreenProps } from 'react-navigation';
+import { useHistory } from 'react-router-native';
+import { ArticleWebView } from '../articles/ArticleWebView';
+import { createAppContainer } from 'react-navigation';
 
 const ItemSeparator = () => {
   return (
@@ -10,9 +13,8 @@ const ItemSeparator = () => {
   )
 }
 
-export function ArticleListScreen(props: NavigationScreenProps) {
+function ArticleListScreen(props) {
   const articles = ArticleControl()
-  const { navigate } = props.navigation
 
   // useEffect with '[]' effectively makes this a componentDidMount
   // tells react this 'effect' does not depend on any prop
@@ -24,12 +26,10 @@ export function ArticleListScreen(props: NavigationScreenProps) {
     articles.fetchNews()
   }, [])
 
+  let history = useHistory();
+
   return (
     <View
-      style={{
-        marginTop: 32,
-        paddingHorizontal: 24,
-      }}
     >
       <FlatList
         data={articles.articleStorage.itemList}
@@ -39,21 +39,27 @@ export function ArticleListScreen(props: NavigationScreenProps) {
             item={item}
             positionInList={index}
             totalItems={articles.articleStorage.itemList.length}
-            onArticleClick={(item) => props.navigation.navigate('ArticleWebView', { item })}
-          />
+            // onArticleClick={() => history.push(`/articles/${item.id}`)}
+            onArticleClick={() => props.navigation.navigate('ArticleDetail', { itemId: item.id, title: item.title })}
+            />
         )}
         ItemSeparatorComponent={ItemSeparator}
         keyExtractor={(item) => item.id}
-      />
-      <Button title="Back" onPress={() => props.navigation.goBack()} />
-      <Button
-        title="Detail page"
-        onPress={() => navigate('ArticleWebView', { id: 3 })}
       />
     </View>
   )
 }
 
 ArticleListScreen.navigationOptions = {
-  title: 'Article Queue',
-}
+  title: 'Dog News Viewer'
+};
+
+export const ArticleListNavigator = createStackNavigator({
+  Test: { screen: () => <Text>Hey</Text>},
+  Home: { screen: ArticleListScreen },
+  ArticleDetail: { screen: ArticleWebView },
+}, {
+  initialRouteName: 'Home'
+});
+
+export const ArticleList = createAppContainer(ArticleListNavigator);

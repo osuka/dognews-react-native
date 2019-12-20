@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import React, {Fragment} from 'react';
+import React, { Fragment, Component, useState } from 'react'
 import {
   SafeAreaView,
   Button,
@@ -19,102 +19,277 @@ import {
   View,
   StatusBar,
   TextInput,
-} from 'react-native';
+  ScrollView,
+  UIManager,
+  LayoutAnimation,
+} from 'react-native'
 
-import {
-  NavigationScreenProps
-} from 'react-navigation';
+import { Route, Link, Switch, useHistory } from 'react-router-native'
+import { authorize, refresh, revoke } from 'react-native-app-auth' // oauth2
 
-import Spinner from 'react-native-loading-spinner-overlay';
+import Spinner from 'react-native-loading-spinner-overlay'
 
-import { login } from '../../services/directauth';
-import authConfig from '../../../auth.config';
+import { login } from '../../services/directauth'
+import authConfig from '../../../auth.config'
+import { NavigationScreenProps } from 'react-navigation'
+
+// ============ we offer various types of login
+
+export const LoginHome = ({ match }) => {
+  let [token, setToken] = useState('');
+  let history = useHistory()
+  return (
+    <View style={{ flex: 1, flexDirection: 'column', alignItems: "center"}}>
+      {token ? <Text>Logged in</Text> : (
+      <Switch>
+        <Route path="/login/direct/:from" component={LoginDirect} />
+        <Route path="/login/okta/:from" component={LoginOkta} />
+        <Route
+          render={() => (
+            <View style={{ flex: 1, flexDirection: 'column'}}>
+              <View style={styles.button}>
+                <Button
+                  title="Login with Okta"
+                  onPress={() =>
+                    history.push(`/login/okta/${match.params.from}`)
+                  }
+                />
+              </View>
+              <View style={styles.button}>
+                <Button
+                  title="Login directly"
+                  onPress={() =>
+                    history.push(`/login/direct/${match.params.from}`)
+                  }
+                />
+              </View>
+              <Text style={{textAlign: "center"}} onPress={() => history.goBack()}>Back</Text>
+            </View>
+          )}
+        />
+      </Switch>
+      )}
+    </View>
+  )
+}
+
+// ============= direct login
 
 type State = {
-  userName: string,
-  password: string,
-  progress: boolean,
+  username: string
+  password: string
+  progress: boolean
   error: string
-};
+  accessToken?: string
+  accessTokenExpirationDate?: string
+  refreshToken?: string
+}
 
-export class LoginScreenDirect extends React.Component {
+function LoginDirect(props: NavigationScreenProps & {redirectTo: string}) {
+  const [state, setState] = React.useState({
+    username: '',
+    password: '',
+    progress: false,
+    error: '',
+  } as State);
+  let history = useHistory();
 
-  state: State;
-
-  static navigationOptions = {
-    title: 'Login',
-  };
-
-  constructor(props: NavigationScreenProps) {
-    super(props);
-    this.state = {
-      userName: '',
-      password: '',
-      progress: false,
-      error: '',
-    };
-  }
-
-  async login() {
-    let self = this;
-    this.setState({progress: true});
+  async function initiateLogin() {
+    setState({ ...state, progress: true })
     try {
-      self.setState({progress: false, error: ''});
-      const token = await login(authConfig.direct.baseUrl, this.state.userName, this.state.password);
-      const {navigate} = (self.props as NavigationScreenProps).navigation;
+      setState({ ...state, progress: false, error: '' })
+      const token = await login(
+        authConfig.direct.baseUrl,
+        state.username,
+        state.password,
+      )
+      // const {navigate} = props.navigation;
       console.log(token);
-      navigate('Home', {token});
+      // TODO: save token
+      history.push(props.redirectTo ? `/${props.redirectTo}` : '/');
+      // navigate('Home', {token});
     } catch (err) {
-      self.setState({progress: false, error: err.message});
+      setState({ ...state, progress: false, error: err.message })
     }
   }
 
-  render() {
-    return (
+  return (
       <Fragment>
-        <StatusBar barStyle="dark-content" />
-        <SafeAreaView style={styles.container}>
-          <Spinner
-            visible={this.state.progress}
-            textContent={'Loading...'}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <Text style={styles.title}>Direct Sign-In</Text>
-          <View style={styles.buttonContainer}>
-            <View style={styles.button}>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Login"
-                onChangeText={text => (this.state.userName = text)}
+        <Spinner
+          visible={state.progress}
+          textContent={'Loading...'}
+          textStyle={styles.spinnerTextStyle}
+        />
+        <View style={styles.buttonContainer}>
+          <View style={styles.button}>
+            <Text style={styles.title}>Direct Sign-In</Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Login"
+              onChangeText={(text) => (state.username = text)}
+            />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Password"
+              secureTextEntry={true}
+              onChangeText={(text) => (state.password = text)}
+            />
+            {!!state.error && (
+              <Text style={styles.error}>{state.error}</Text>
+            )}
+            <View style={{ marginTop: 40, height: 40 }}>
+              <Button
+                testID="loginButton"
+                onPress={async () => {
+                  state.progress = true
+                  await initiateLogin()
+                }}
+                title="Login"
               />
-              <TextInput
-                style={styles.textInput}
-                placeholder="Password"
-                secureTextEntry={true}
-                onChangeText={text => (this.state.password = text)}
-              />
-              {!!this.state.error && <Text style={styles.error}>{this.state.error}</Text>}
-              <View style={{marginTop: 40, height: 40}}>
-                <Button
-                  testID="loginButton"
-                  onPress={async () => {
-                    this.state.progress = true;
-                    await this.login();
-                  }}
-                  title="Login"
-                />
-              </View>
             </View>
           </View>
-        </SafeAreaView>
+        </View>
       </Fragment>
     );
+  };
+
+// okta login
+
+// ======================== login
+
+const config = {
+  issuer: authConfig.oidc.discoveryUri,
+  clientId: authConfig.oidc.clientId,
+  redirectUrl: authConfig.oidc.redirectUri,
+  scopes: authConfig.oidc.scopes,
+}
+
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true)
+
+function LoginOkta(props) {
+  let [state, setState] = useState({
+      username: '',
+      password: '',
+      progress: false,
+      error: '',
+      accessToken: '',
+      accessTokenExpirationDate: '',
+      refreshToken: '',
+    } as State);
+
+  const animateState = (nextState: State, delay: number = 0) => {
+    setTimeout(() => {
+      LayoutAnimation.easeInEaseOut()
+      setState(nextState);
+    }, delay)
   }
+
+  const initiateAuthorize = async () => {
+    try {
+      const authState = await authorize(config);
+      animateState(
+        { ...state,
+          error: '',
+          progress: true,
+          accessToken: authState.accessToken,
+          accessTokenExpirationDate: authState.accessTokenExpirationDate,
+          refreshToken: authState.refreshToken,
+        },
+        500,
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const initiateRefresh = async () => {
+    try {
+      animateState({
+        ...state,
+        progress: true,
+        error: ''
+      })
+      const authState = await refresh(config, {
+        refreshToken: state.refreshToken,
+      })
+      animateState({
+        ...state,
+        error: '',
+        progress: false,
+        accessToken: authState.accessToken || state.accessToken,
+        accessTokenExpirationDate:
+          authState.accessTokenExpirationDate || state.accessTokenExpirationDate,
+        refreshToken: authState.refreshToken || state.refreshToken,
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const initiateRevoke = async () => {
+    try {
+      animateState({
+        ...state,
+        progress: true,
+        error: ''
+      })
+      await revoke(config, {
+        tokenToRevoke: state.refreshToken || state.accessToken,
+      })
+      animateState({
+        ...state,
+        error: '',
+        progress: false,
+        accessToken: '',
+        accessTokenExpirationDate: '',
+        refreshToken: '',
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  return (
+    <ScrollView>
+      {!!state.accessToken && (
+        <Text>
+          {'Access Token:'}
+          {state.accessToken}
+        </Text>
+      )}
+      {!!state.accessToken && (
+        <Text>
+          {'Expiration Date:'}
+          {state.accessTokenExpirationDate}
+        </Text>
+      )}
+      {!!state.accessToken && (
+        <Text>
+          {'Refresh Token:'}
+          {state.refreshToken}
+        </Text>
+      )}
+      {!state.accessToken && (
+        <Button
+          onPress={initiateAuthorize}
+          title="Authorize"
+          color="#017CC0"
+        ></Button>
+      )}
+      {(!!state.accessToken || !!state.refreshToken) && (
+        <Button onPress={initiateRefresh} title="Refresh" color="#24C2CB" />
+      )}
+      {!!state.accessToken && (
+        <Button onPress={initiateRevoke} title="Revoke" color="#EF525B" />
+      )}
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
   spinnerTextStyle: {
-    color: '#FFF'
+    color: '#FFF',
   },
   textInput: {
     marginTop: 10,
@@ -124,7 +299,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     marginTop: 10,
   },
   button: {
@@ -145,15 +320,13 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     color: '#0066cc',
-    paddingTop: 40,
+    paddingTop: 5,
     textAlign: 'center',
   },
   error: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#AF0608',
-    paddingTop: 12,
-    paddingBottom: 12,
     textAlign: 'center',
   },
-});
+})

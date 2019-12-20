@@ -11,12 +11,12 @@ import {
   Image,
   Dimensions,
 } from 'react-native'
-import { Palette } from './Palette'
-import { Rating } from './Rating'
+import { Palette } from '../Palette'
+import { Rating } from '../Rating'
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { Item, ArticleControl, NewsItemRating } from '../services/articles'
+import { Item, ArticleControl, NewsItemRating } from '../../services/articles'
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&

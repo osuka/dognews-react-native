@@ -1,11 +1,12 @@
 import * as React from 'react'
-import { Palette } from './Palette'
-import { Item, ArticleControl } from '../services/articles'
+import { Palette } from '../Palette'
+import { Item, ArticleControl } from '../../services/articles'
 import { WebView } from 'react-native-webview'
 import { View, Text, Button } from 'react-native'
-import { NavigationScreenProps } from 'react-navigation'
+import { useHistory } from 'react-router-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import { NavigationScreenProps } from 'react-navigation'
 
 // This uses
 //
@@ -14,32 +15,29 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 // Note that it needs to be linked (npx react-native link react-native-webview)
 // so that the native part is added to the iOS and Android projects
 
-export function ArticleWebViewScreen(props: NavigationScreenProps) {
+export function ArticleWebView(props: NavigationScreenProps) {
   const articles = ArticleControl()
 
   let webView: WebView
-  const item: Item = props.navigation.state.params.item
+  const itemId: string = props.navigation.getParam('itemId');
+  const item: Item = articles.articleStorage.itemList.find(
+    (value) => value.id === itemId,
+  )
 
-  const changeTitle = (titleText: string) => {
-    if (titleText) {
-      props.navigation.setParams({ title: titleText })
-    }
-  }
-
-  const newTitle = item ? item.title : 'No article title'
+  const newTitle = item?.title || 'No article title';
   if (props.navigation.getParam('title') !== newTitle) {
-    changeTitle(newTitle)
+    props.navigation.setParams({ title: newTitle });
   }
 
   const rating = articles.getItemUserRating(item)
 
   return (
     <View style={{ flexDirection: 'column', flex: 1 }}>
-      <Text>{item ? item.url : 'No url'}</Text>
+      <Text>{item?.url || 'No url'}</Text>
       <WebView
         ref={(ref) => (webView = ref)}
         source={
-          (item && { uri: item.url }) || { html: '<h1>No item selected</h1>' }
+          (item?.url && { uri: item.url }) || { html: '<h1>No item selected</h1>' }
         }
         incognito={true}
         style={{ marginTop: 20 }}
@@ -77,7 +75,14 @@ export function ArticleWebViewScreen(props: NavigationScreenProps) {
             color={Palette.headingForeground}
             backgroundColor="transparent"
             onPress={() => {
-              articles.removeItem(item)
+              // articles.removeItem(item)
+              const currentUserRemovedIt = articles.getItemUserRating(item) < 0
+              if (currentUserRemovedIt) {
+                articles.rateItem(item, 0)
+              } else {
+                articles.rateItem(item, -1)
+              }
+
               props.navigation.goBack()
             }}
           ></Icon.Button>
@@ -87,8 +92,9 @@ export function ArticleWebViewScreen(props: NavigationScreenProps) {
   )
 }
 
-ArticleWebViewScreen.navigationOptions = ({ navigation }) => {
+ArticleWebView.navigationOptions = ({ navigation }) => {
+  const {state} = navigation;
   return {
-    title: `${navigation.state.params.title || 'Loading...'}`,
-  }
-}
+    title: `${state.params.title}`,
+  };
+};
