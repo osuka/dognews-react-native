@@ -2,9 +2,9 @@
  * @format
  */
 
-import 'react-native'
-import React from 'react'
-import { Article } from '../lib/ui/Article'
+import 'react-native';
+import React from 'react';
+import { Article } from '../lib/ui/articles/Article';
 
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer'

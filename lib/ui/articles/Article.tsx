@@ -1,5 +1,4 @@
-import * as React from 'react'
-import * as _ from 'lodash'
+import React from 'react'
 import {
   LayoutAnimation,
   Linking,
@@ -11,12 +10,15 @@ import {
   Image,
   Dimensions,
 } from 'react-native'
-import { Palette } from '../Palette'
-import { Rating } from '../Rating'
+
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { Item, ArticleControl, NewsItemRating } from '../../services/articles'
+
+import { Palette } from '../Palette'
+import { Rating } from '../Rating'
+import { ArticleControl } from './ArticleControl'
+import { Item, NewsItemRating } from '../../models/items'
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -45,8 +47,8 @@ export function Article({
 }: {
   item: Item
   positionInList: number
-  totalItems: number,
-  onArticleClick: (Item) => boolean,
+  totalItems: number
+  onArticleClick: () => boolean
 }) {
   const articles = ArticleControl()
   const [collapsed, setCollapsed] = React.useState(true)
@@ -61,8 +63,8 @@ export function Article({
     'easeOut',
     'opacity',
   )
+
   const toggleRemoved = () => {
-    // const someoneRemovedIt = !!_.find(item.ratings, (r: NewsItemRating) => r.rating < 0);
     const currentUserRemovedIt = articles.getItemUserRating(item) < 0
     if (currentUserRemovedIt) {
       articles.rateItem(item, 0)
@@ -106,7 +108,7 @@ export function Article({
       style={{ backgroundColor: Palette.mainBackground }}
       onPress={toggleCollapsed}
     >
-      <View style={{ flexDirection: 'column', padding: 2 }}>
+      <View style={{ flexDirection: 'column', padding: 2, backgroundColor:'#fffdf6' }}>
         <View style={{ flexDirection: 'row', padding: 2 }}>
           {rating >= 0 && item.thumbnail && (
             <TouchableOpacity
@@ -182,9 +184,7 @@ export function Article({
 
         {rating >= 0 && (
           <View style={{ flexDirection: 'row', padding: 2 }}>
-            <TouchableOpacity style={{ flex: 1 }} onPress={(item) => {
-              onArticleClick(item);
-            }}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={onArticleClick}>
               <Text
                 style={{
                   color: Palette.mainForeground,
@@ -207,7 +207,7 @@ export function Article({
     </TouchableWithoutFeedback>
   )
 
-  // the UI only allows (at the moment) to modify ratings
-  const flatRatings = _.flatMapDeep(item.ratings).join(',') // not sure if arrays are compared as values
+  // the UI only allows (at the moment) to modify ratings so we cache based on that
+  const flatRatings = JSON.stringify(item.ratings)
   return React.useMemo(articleComponent, [item.id, flatRatings, collapsed])
 }

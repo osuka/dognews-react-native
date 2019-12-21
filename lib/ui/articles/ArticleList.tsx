@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react'
 import { FlatList, Button, View, Text } from 'react-native'
-import { Item, ArticleControl } from '../../services/articles'
+import {
+  createAppContainer,
+  createStackNavigator,
+  NavigationScreenProps,
+} from 'react-navigation'
+import { useHistory } from 'react-router-native'
+
+import { Item } from '../../models/items'
+import { ArticleControl } from './ArticleControl'
 import { Article } from './Article'
-import { createStackNavigator, NavigationScreenProps } from 'react-navigation';
-import { useHistory } from 'react-router-native';
-import { ArticleWebView } from '../articles/ArticleWebView';
-import { createAppContainer } from 'react-navigation';
+import { ArticleWebView } from './ArticleWebView'
 
 const ItemSeparator = () => {
   return (
@@ -13,7 +18,7 @@ const ItemSeparator = () => {
   )
 }
 
-function ArticleListScreen(props) {
+function ArticleListScreen(props: NavigationScreenProps) {
   const articles = ArticleControl()
 
   // useEffect with '[]' effectively makes this a componentDidMount
@@ -26,11 +31,10 @@ function ArticleListScreen(props) {
     articles.fetchNews()
   }, [])
 
-  let history = useHistory();
+  let history = useHistory()
 
   return (
-    <View
-    >
+    <View>
       <FlatList
         data={articles.articleStorage.itemList}
         renderItem={({ item, index }: { item: Item; index: number }) => (
@@ -40,8 +44,13 @@ function ArticleListScreen(props) {
             positionInList={index}
             totalItems={articles.articleStorage.itemList.length}
             // onArticleClick={() => history.push(`/articles/${item.id}`)}
-            onArticleClick={() => props.navigation.navigate('ArticleDetail', { itemId: item.id, title: item.title })}
-            />
+            onArticleClick={() =>
+              props.navigation.navigate('ArticleDetail', {
+                itemId: item.id,
+                title: item.title,
+              })
+            }
+          />
         )}
         ItemSeparatorComponent={ItemSeparator}
         keyExtractor={(item) => item.id}
@@ -51,15 +60,19 @@ function ArticleListScreen(props) {
 }
 
 ArticleListScreen.navigationOptions = {
-  title: 'Dog News Viewer'
-};
+  title: 'Dog News Viewer',
+}
 
-export const ArticleListNavigator = createStackNavigator({
-  Test: { screen: () => <Text>Hey</Text>},
-  Home: { screen: ArticleListScreen },
-  ArticleDetail: { screen: ArticleWebView },
-}, {
-  initialRouteName: 'Home'
-});
+export const ArticleListNavigator = createStackNavigator(
+  {
+    Test: { screen: () => <Text>Hey</Text> },
+    Home: { screen: ArticleListScreen },
+    ArticleDetail: { screen: ArticleWebView },
+  },
+  {
+    headerMode: "none",
+    initialRouteName: 'Home',
+  },
+)
 
-export const ArticleList = createAppContainer(ArticleListNavigator);
+export const ArticleList = createAppContainer(ArticleListNavigator)

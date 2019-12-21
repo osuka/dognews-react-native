@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { Palette } from '../Palette'
-import { Item, ArticleControl } from '../../services/articles'
 import { WebView } from 'react-native-webview'
 import { View, Text, Button } from 'react-native'
-import { useHistory } from 'react-router-native'
-
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { NavigationScreenProps } from 'react-navigation'
+
+import { Palette } from '../Palette'
+import { Item } from '../../models/items'
+import { ArticleControl } from './ArticleControl'
 
 // This uses
 //
@@ -19,14 +19,14 @@ export function ArticleWebView(props: NavigationScreenProps) {
   const articles = ArticleControl()
 
   let webView: WebView
-  const itemId: string = props.navigation.getParam('itemId');
+  const itemId: string = props.navigation.getParam('itemId')
   const item: Item = articles.articleStorage.itemList.find(
     (value) => value.id === itemId,
   )
 
-  const newTitle = item?.title || 'No article title';
+  const newTitle = item?.title || 'No article title'
   if (props.navigation.getParam('title') !== newTitle) {
-    props.navigation.setParams({ title: newTitle });
+    props.navigation.setParams({ title: newTitle })
   }
 
   const rating = articles.getItemUserRating(item)
@@ -37,7 +37,9 @@ export function ArticleWebView(props: NavigationScreenProps) {
       <WebView
         ref={(ref) => (webView = ref)}
         source={
-          (item?.url && { uri: item.url }) || { html: '<h1>No item selected</h1>' }
+          (item?.url && { uri: item.url }) || {
+            html: '<h1>No item selected</h1>',
+          }
         }
         incognito={true}
         style={{ marginTop: 20 }}
@@ -93,8 +95,8 @@ export function ArticleWebView(props: NavigationScreenProps) {
 }
 
 ArticleWebView.navigationOptions = ({ navigation }) => {
-  const {state} = navigation;
+  const { state } = navigation
   return {
     title: `${state.params.title}`,
-  };
-};
+  }
+}
