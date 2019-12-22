@@ -1,15 +1,18 @@
-import * as React from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
-import { ArticleContext } from './lib/ui/articles/ArticleControl';
-import { Item } from './lib/models/items';
+import * as React from 'react'
+import { Text, View, StyleSheet, Image } from 'react-native'
+import { ArticleContext } from './lib/ui/articles/ArticleControl'
+import { Item } from './lib/models/items'
 import {
-  NativeRouter as Router,
   Route,
   Link,
   Switch,
+  History,
+  useHistory,
   BackButton,
+  create,
 } from 'react-router-native'
-import { LoginHome } from './lib/ui/auth/LoginScreen'
+import { LoginHome, LoginContextType, LoginContext } from './lib/ui/auth/Login'
+import { LoginState } from './lib/models/login'
 import { ArticleList } from './lib/ui/articles/ArticleList'
 
 export const ArticleProvider = (props: { children: React.ReactNode }) => {
@@ -25,46 +28,86 @@ export const ArticleProvider = (props: { children: React.ReactNode }) => {
     <ArticleContext.Provider value={articleStorage}>
       {props.children}
     </ArticleContext.Provider>
-  );
-};
+  )
+}
 
 function NoMatch({ location }) {
   return <Text style={styles.header}>No match for {location.pathname}</Text>
 }
 
+// We need this until https://github.com/ReactTraining/react-router/issues/5362 is fixed
+// Currently clicking twice on the same route generates a new entry, it shouldn't if
+// it's in the same place
+
+let isBrowserBlockerApplied = false
+function applyBrowserLocationBlocker(history: History) {
+  if (isBrowserBlockerApplied) {
+    return // we need to call block only once, else they accumulate
+  }
+  isBrowserBlockerApplied = true
+  let currentLocation = null
+
+  history.block((location, action) => {
+    const nextLocation = location.pathname + location.search
+
+    if (action === 'PUSH') {
+      if (currentLocation === nextLocation) {
+        return false
+      }
+    }
+
+    currentLocation = nextLocation
+  })
+}
+
 export const AppMain = () => {
+  let [loginStatus, setLoginStatus] = React.useState({ username: '' } as LoginState)
+  let history = useHistory()
+  applyBrowserLocationBlocker(history)
   return (
     <ArticleProvider>
-      <Router>
-        <BackButton/>
+      <LoginContext.Provider value = {{loginStatus, setLoginStatus} as LoginContextType}>
+        <BackButton />
         <View style={styles.nav}>
           <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
             <Text>Home</Text>
           </Link>
-          <Link
-            to="/articles"
-            underlayColor="#f0f4f7"
-            style={styles.navItem}
-          >
+          <Link to="/articles" underlayColor="#f0f4f7" style={styles.navItem}>
             <Text>Article Queue</Text>
           </Link>
-          <Link
-            to="/login/home"
-            underlayColor="#f0f4f7"
-            style={styles.navItem}
-          >
-            <Text>{`Login`}</Text>
-          </Link>
-        </View>
+          {!loginStatus.accessToken ? (
+            <Link to="/login/home" underlayColor="#f0f4f7" style={styles.navItem}>
+              <Text>{`Login`}</Text>
+            </Link>
+          ) : (
+            <Link to="/logout" underlayColor="#f0f4f7" style={styles.navItem}>
+            <Text>{`Logout`}</Text>
+            </Link>
+          )}
+      </View>
 
-        <View style={{flex:1, flexDirection:"column", justifyContent:"center", backgroundColor:'#f0f0f0'}}>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            justifyContent: 'center',
+            backgroundColor: '#f0f0f0',
+          }}
+        >
           <Switch>
             <Route
               path="/"
               exact
               render={() => (
-                <View style={{flex:1, flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
-                  <Image source={require('./assets/onlydognews-logo-main.png')}/>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Image source={require('./assets/onlydognews-logo-main.png')} />
                 </View>
               )}
             />
@@ -74,7 +117,7 @@ export const AppMain = () => {
             <Route component={NoMatch} />
           </Switch>
         </View>
-      </Router>
+        </LoginContext.Provider>
     </ArticleProvider>
   )
 }
@@ -98,5 +141,5 @@ const styles = StyleSheet.create({
   },
   subNavItem: {
     padding: 5,
-  }
-});
+  },
+})
