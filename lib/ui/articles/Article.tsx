@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   LayoutAnimation,
   Linking,
@@ -9,33 +9,34 @@ import {
   View,
   Image,
   Dimensions,
-} from 'react-native'
+} from 'react-native';
+import HTML from 'react-native-render-html';
 
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
-import Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { Palette } from '../Palette'
-import { Rating } from '../Rating'
-import { ArticleControl } from './ArticleControl'
-import { Item, NewsItemRating } from '../../models/items'
+import { Palette } from '../Palette';
+import { Rating } from '../Rating';
+import { ArticleControl } from './ArticleControl';
+import { Item, NewsItemRating } from '../../models/items';
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&
-  UIManager.setLayoutAnimationEnabledExperimental(true)
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const extractDomain = (url: string) => {
-  const regex = /.*\/\/([^/]*).*/
-  const matches = regex.exec(url)
+  const regex = /.*\/\/([^/]*).*/;
+  const matches = regex.exec(url);
   if (!matches || matches.length <= 1) {
-    return url
+    return url;
   }
-  return matches[1]
-}
+  return matches[1];
+};
 
-export const NewsItem_Height = 60
+export const NewsItem_Height = 60;
 
-const layoutAnimationAppear = LayoutAnimation.create(60, 'easeIn', 'opacity')
+const layoutAnimationAppear = LayoutAnimation.create(60, 'easeIn', 'opacity');
 
 // This is a functional component - combined with useState it bypasses the need to use 'this' completely
 // while still allowing type safety at compile time
@@ -45,60 +46,60 @@ export function Article({
   totalItems,
   onArticleClick,
 }: {
-  item: Item
-  positionInList: number
-  totalItems: number
-  onArticleClick: () => boolean
+  item: Item;
+  positionInList: number;
+  totalItems: number;
+  onArticleClick: () => boolean;
 }) {
-  const articles = ArticleControl()
-  const [collapsed, setCollapsed] = React.useState(true)
+  const articles = ArticleControl();
+  const [collapsed, setCollapsed] = React.useState(true);
 
   const toggleCollapsed = () => {
-    LayoutAnimation.configureNext(layoutAnimationAppear)
-    setCollapsed(!collapsed)
-  }
+    LayoutAnimation.configureNext(layoutAnimationAppear);
+    setCollapsed(!collapsed);
+  };
 
   const layoutAnimationDisappear = LayoutAnimation.create(
     60,
     'easeOut',
     'opacity',
-  )
+  );
 
   const toggleRemoved = () => {
-    const currentUserRemovedIt = articles.getItemUserRating(item) < 0
+    const currentUserRemovedIt = articles.getItemUserRating(item) < 0;
     if (currentUserRemovedIt) {
-      articles.rateItem(item, 0)
+      articles.rateItem(item, 0);
     } else {
-      articles.rateItem(item, -1)
+      articles.rateItem(item, -1);
     }
-    LayoutAnimation.configureNext(layoutAnimationDisappear)
-  }
+    LayoutAnimation.configureNext(layoutAnimationDisappear);
+  };
 
-  const domain = extractDomain(item.url)
-  const positionText = `${positionInList + 1}/${totalItems}`
+  const domain = extractDomain(item.url);
+  const positionText = `${positionInList + 1}/${totalItems}`;
 
   // Icons: https://github.com/oblador/react-native-vector-icons#icon-component
   //https://fontawesome.com/v4.7.0/icons/
   // Guide: https://github.com/oblador/react-native-vector-icons/blob/master/FONTAWESOME5.md
 
-  const rating = articles.getItemUserRating(item)
+  const rating = articles.getItemUserRating(item);
 
-  const { width, height } = Dimensions.get('window')
-  const IMAGE_SMALL_WIDTH = width * 0.14
-  const IMAGE_WIDTH = width * 0.82
+  const { width, height } = Dimensions.get('window');
+  const IMAGE_SMALL_WIDTH = width * 0.14;
+  const IMAGE_WIDTH = width * 0.82;
 
   // Guideline sizes are based on standard ~5" screen mobile device
   // https://blog.solutotlv.com/size-matters/
-  const guidelineBaseWidth = 350
-  const guidelineBaseHeight = 680
+  const guidelineBaseWidth = 350;
+  const guidelineBaseHeight = 680;
 
-  const scale = (size: number) => (width / guidelineBaseWidth) * size
+  const scale = (size: number) => (width / guidelineBaseWidth) * size;
   // const verticalScale = (size: number) => height / guidelineBaseHeight * size;
   const moderateScale = (size: number, factor = 0.5) =>
-    size + (scale(size) - size) * factor
+    size + (scale(size) - size) * factor;
 
-  const normalFontSize = 14
-  const smallFontSize = moderateScale(normalFontSize, -0.6)
+  const normalFontSize = 14;
+  const smallFontSize = moderateScale(normalFontSize, -0.6);
 
   const articleComponent = () => (
     <TouchableWithoutFeedback
@@ -108,7 +109,13 @@ export function Article({
       style={{ backgroundColor: Palette.mainBackground }}
       onPress={toggleCollapsed}
     >
-      <View style={{ flexDirection: 'column', padding: 2, backgroundColor:'#fffdf6' }}>
+      <View
+        style={{
+          flexDirection: 'column',
+          padding: 2,
+          backgroundColor: '#fffdf6',
+        }}
+      >
         <View style={{ flexDirection: 'row', padding: 2 }}>
           {rating >= 0 && item.thumbnail && (
             <TouchableOpacity
@@ -168,15 +175,23 @@ export function Article({
                     />
                   </View>
                 )}
-                <Text
+                <View
                   style={{
                     textAlign: 'left',
                     padding: 6,
                     color: Palette.mainForeground,
                   }}
                 >
-                  {item.summary}
-                </Text>
+                  <HTML
+                    style={{
+                      textAlign: 'left',
+                      padding: 6,
+                      color: Palette.mainForeground,
+                    }}
+                  >
+                    {item.summary || item.description || item.body}
+                  </HTML>
+                </View>
               </View>
             )}
           </View>
@@ -205,9 +220,9 @@ export function Article({
         )}
       </View>
     </TouchableWithoutFeedback>
-  )
+  );
 
   // the UI only allows (at the moment) to modify ratings so we cache based on that
-  const flatRatings = JSON.stringify(item.ratings)
-  return React.useMemo(articleComponent, [item.id, flatRatings, collapsed])
+  const flatRatings = JSON.stringify(item.ratings);
+  return React.useMemo(articleComponent, [item.id, flatRatings, collapsed]);
 }

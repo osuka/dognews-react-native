@@ -1,7 +1,7 @@
-import * as React from 'react'
-import { Text, View, StyleSheet, Image } from 'react-native'
-import { ArticleContext } from './lib/ui/articles/ArticleControl'
-import { Item } from './lib/models/items'
+import * as React from 'react';
+import { Text, View, StyleSheet, Image } from 'react-native';
+import { ArticleContext } from './lib/ui/articles/ArticleControl';
+import { Item } from './lib/models/items';
 import {
   Route,
   Link,
@@ -10,81 +10,92 @@ import {
   useHistory,
   BackButton,
   create,
-} from 'react-router-native'
-import { LoginHome, LoginContextType, LoginContext } from './lib/ui/auth/Login'
-import { LoginState } from './lib/models/login'
-import { ArticleList } from './lib/ui/articles/ArticleList'
+} from 'react-router-native';
+import HTML from 'react-native-render-html';
+import { LoginHome, LoginContextType, LoginContext } from './lib/ui/auth/Login';
+import { LoginState } from './lib/models/login';
+import { ArticleList } from './lib/ui/articles/ArticleList';
 
 export const ArticleProvider = (props: { children: React.ReactNode }) => {
-  const [itemList, setItemList] = React.useState<Array<Item>>([])
-  const [fetchingStatus, setFetchingStatus] = React.useState(false)
+  const [itemList, setItemList] = React.useState<Array<Item>>([]);
+  const [fetchingStatus, setFetchingStatus] = React.useState(false);
   const articleStorage = {
     itemList,
     setItemList,
     fetchingStatus,
     setFetchingStatus,
-  }
+  };
   return (
     <ArticleContext.Provider value={articleStorage}>
       {props.children}
     </ArticleContext.Provider>
-  )
-}
+  );
+};
 
 function NoMatch({ location }) {
-  return <Text style={styles.header}>No match for {location.pathname}</Text>
+  return <Text style={styles.header}>No match for {location.pathname}</Text>;
 }
 
 // We need this until https://github.com/ReactTraining/react-router/issues/5362 is fixed
 // Currently clicking twice on the same route generates a new entry, it shouldn't if
 // it's in the same place
 
-let isBrowserBlockerApplied = false
 function applyBrowserLocationBlocker(history: History) {
-  if (isBrowserBlockerApplied) {
-    return // we need to call block only once, else they accumulate
+  if (history.isBrowserBlockerApplied) {
+    return; // we need to call block only once, else they accumulate
+    // note that this is not a perfect fix - reload AppMain will attempt to recreate it
   }
-  isBrowserBlockerApplied = true
-  let currentLocation = null
+  history.isBrowserBlockerApplied = true; // monkey patching
+  let currentLocation = null;
 
   history.block((location, action) => {
-    const nextLocation = location.pathname + location.search
+    const nextLocation = location.pathname + location.search;
 
     if (action === 'PUSH') {
       if (currentLocation === nextLocation) {
-        return false
+        return false;
       }
     }
 
-    currentLocation = nextLocation
-  })
+    currentLocation = nextLocation;
+  });
 }
 
 export const AppMain = () => {
-  let [loginStatus, setLoginStatus] = React.useState({ username: '' } as LoginState)
-  let history = useHistory()
-  applyBrowserLocationBlocker(history)
+  let [loginStatus, setLoginStatus] = React.useState({
+    username: '',
+  } as LoginState);
+  applyBrowserLocationBlocker(useHistory());
   return (
     <ArticleProvider>
-      <LoginContext.Provider value = {{loginStatus, setLoginStatus} as LoginContextType}>
+      <LoginContext.Provider
+        value={{ loginStatus, setLoginStatus } as LoginContextType}
+      >
         <BackButton />
         <View style={styles.nav}>
           <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
             <Text>Home</Text>
           </Link>
           <Link to="/articles" underlayColor="#f0f4f7" style={styles.navItem}>
-            <Text>Article Queue</Text>
+            <Text>Public Feed</Text>
+          </Link>
+          <Link to="/moderation" underlayColor="#f0f4f7" style={styles.navItem}>
+            <Text>Queue</Text>
           </Link>
           {!loginStatus.accessToken ? (
-            <Link to="/login/home" underlayColor="#f0f4f7" style={styles.navItem}>
+            <Link
+              to="/login/home"
+              underlayColor="#f0f4f7"
+              style={styles.navItem}
+            >
               <Text>{`Login`}</Text>
             </Link>
           ) : (
             <Link to="/logout" underlayColor="#f0f4f7" style={styles.navItem}>
-            <Text>{`Logout`}</Text>
+              <Text>{`Logout`}</Text>
             </Link>
           )}
-      </View>
+        </View>
 
         <View
           style={{
@@ -107,20 +118,23 @@ export const AppMain = () => {
                     alignItems: 'center',
                   }}
                 >
-                  <Image source={require('./assets/onlydognews-logo-main.png')} />
+                  <Image
+                    source={require('./assets/onlydognews-logo-main.png')}
+                  />
                 </View>
               )}
             />
-            <Route exact path="/articles" component={ArticleList} />
+            <Route exact path="/moderation" component={ArticleList} />
+            <Route exact path="/articles" render={() => <Text>Soon!</Text>}></Route>
             <Route path="/login/:provider/:from" component={LoginHome} />
             <Route path="/login/:provider" component={LoginHome} />
             <Route component={NoMatch} />
           </Switch>
         </View>
-        </LoginContext.Provider>
+      </LoginContext.Provider>
     </ArticleProvider>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -142,4 +156,4 @@ const styles = StyleSheet.create({
   subNavItem: {
     padding: 5,
   },
-})
+});

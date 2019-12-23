@@ -125,3 +125,5 @@ android/app/src/main/assets/fonts/FontAwesome5_Solid.ttf
 android/app/src/main/assets/fonts/FontAwesome5_Regular.ttf
 android/app/src/main/assets/fonts/FontAwesome5_Brands.ttf
 
+# this file contains semi-secrets (not really, since they are included in the app, but no need to publish)
+auth.config.js

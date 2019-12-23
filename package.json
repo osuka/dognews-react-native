@@ -23,6 +23,7 @@
         "react-native-collapsible": "1.x",
         "react-native-gesture-handler": "^1.5.2",
         "react-native-loading-spinner-overlay": "1.x.x",
+        "react-native-render-html": "^4.1.2",
         "react-native-vector-icons": "6.x.x",
         "react-native-webview": "7.x.x",
         "react-navigation": "^3.13.0",

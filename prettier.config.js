@@ -1,6 +1,6 @@
 // .prettierc
 module.exports = {
-  "semi": false,
+  "semi": true,
   "singleQuote": true,
   "trailingComma": "all",
   "arrowParens": "always"
