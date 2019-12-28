@@ -18,7 +18,11 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Palette } from '../Palette';
 import { Rating } from '../Rating';
-import { ArticleControl } from './ArticleControl';
+import {
+  ArticleContext,
+  ArticleContextType,
+  ArticleControl,
+} from './ArticleControl';
 import { Item, NewsItemRating } from '../../models/items';
 
 // Layout animation is disabled by default
@@ -51,8 +55,8 @@ export function Article({
   totalItems: number;
   onArticleClick: () => boolean;
 }) {
-  const articles = ArticleControl();
   const [collapsed, setCollapsed] = React.useState(true);
+  const articleContext = React.useContext(ArticleContext);
 
   const toggleCollapsed = () => {
     LayoutAnimation.configureNext(layoutAnimationAppear);
@@ -66,11 +70,12 @@ export function Article({
   );
 
   const toggleRemoved = () => {
-    const currentUserRemovedIt = articles.getItemUserRating(item) < 0;
+    const currentUserRemovedIt =
+      ArticleControl.getItemUserRating(articleContext, item) < 0;
     if (currentUserRemovedIt) {
-      articles.rateItem(item, 0);
+      ArticleControl.rateItem(articleContext, item, 0);
     } else {
-      articles.rateItem(item, -1);
+      ArticleControl.rateItem(articleContext, item, -1);
     }
     LayoutAnimation.configureNext(layoutAnimationDisappear);
   };
@@ -82,7 +87,7 @@ export function Article({
   //https://fontawesome.com/v4.7.0/icons/
   // Guide: https://github.com/oblador/react-native-vector-icons/blob/master/FONTAWESOME5.md
 
-  const rating = articles.getItemUserRating(item);
+  const rating = ArticleControl.getItemUserRating(articleContext, item);
 
   const { width, height } = Dimensions.get('window');
   const IMAGE_SMALL_WIDTH = width * 0.14;
@@ -103,7 +108,7 @@ export function Article({
 
   const articleComponent = () => (
     <TouchableWithoutFeedback
-      key={item.id}
+      key={item.id || item.url}
       delayPressIn={0}
       delayPressOut={0}
       style={{ backgroundColor: Palette.mainBackground }}
@@ -122,10 +127,15 @@ export function Article({
               onPress={() => item.image && Linking.openURL(item.image)}
             >
               <Image
-                style={{ width: IMAGE_SMALL_WIDTH, height: IMAGE_SMALL_WIDTH }}
+                style={{
+                  width: IMAGE_SMALL_WIDTH,
+                  height: IMAGE_SMALL_WIDTH,
+                }}
                 source={{
-                  uri:
-                    'https://gatillos.com/onlydognews-assets/' + item.thumbnail,
+                  uri: item.thumbnail?.startsWith('http')
+                    ? item.thumbnail
+                    : 'https://gatillos.com/onlydognews-assets/' +
+                      item.thumbnail,
                 }}
               />
             </TouchableOpacity>
@@ -168,18 +178,17 @@ export function Article({
                     <Image
                       style={{ width: IMAGE_WIDTH, height: IMAGE_WIDTH }}
                       source={{
-                        uri:
-                          'https://gatillos.com/onlydognews-assets/' +
-                          item.thumbnail,
+                        uri: item.thumbnail?.startsWith('http')
+                          ? item.thumbnail
+                          : 'https://gatillos.com/onlydognews-assets/' +
+                            item.thumbnail,
                       }}
                     />
                   </View>
                 )}
                 <View
                   style={{
-                    textAlign: 'left',
                     padding: 6,
-                    color: Palette.mainForeground,
                   }}
                 >
                   <HTML
@@ -188,9 +197,13 @@ export function Article({
                       padding: 6,
                       color: Palette.mainForeground,
                     }}
-                  >
-                    {item.summary || item.description || item.body}
-                  </HTML>
+                    html={
+                      item.summary ||
+                      item.description ||
+                      item.body ||
+                      '<i>No summary</i>'
+                    }
+                  />
                 </View>
               </View>
             )}
@@ -214,8 +227,10 @@ export function Article({
                 </Text>
               </Text>
             </TouchableOpacity>
-
-            <Rating rating={rating} onPress={() => articles.rateItem(item)} />
+            <Rating
+              rating={rating}
+              onPress={() => ArticleControl.rateItem(articleContext, item)}
+            />
           </View>
         )}
       </View>

@@ -14,7 +14,8 @@ export async function login(url: string, username: string, password: string) {
 
   let response = await fetch(`${url}/auth/login/`, options);
   if (response && response.ok) {
-    return await response.json();
+    const json = await response.json();
+    return json?.token;
   } else {
     let msg = `Please try again ${response.status}`;
     if (response.status >= 400 && response.status <= 499) {

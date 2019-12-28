@@ -1,12 +1,12 @@
-import * as React from 'react'
-import { WebView } from 'react-native-webview'
-import { View, Text, Button } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome5'
-import { NavigationScreenProps } from 'react-navigation'
+import * as React from 'react';
+import { WebView } from 'react-native-webview';
+import { View, Text, Button } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { NavigationScreenProps } from 'react-navigation';
 
-import { Palette } from '../Palette'
-import { Item } from '../../models/items'
-import { ArticleControl } from './ArticleControl'
+import { Palette } from '../Palette';
+import { Item } from '../../models/items';
+import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleControl';
 
 // This uses
 //
@@ -16,20 +16,18 @@ import { ArticleControl } from './ArticleControl'
 // so that the native part is added to the iOS and Android projects
 
 export function ArticleWebView(props: NavigationScreenProps) {
-  const articles = ArticleControl()
+  let webView: WebView;
+  const [loading, setLoading] = React.useState(false);
+  const articleContext = React.useContext(ArticleContext);
+  const itemId: string = props.navigation.getParam('itemId');
+  const item: Item = ArticleControl.findItem(articleContext, itemId);
 
-  let webView: WebView
-  const itemId: string = props.navigation.getParam('itemId')
-  const item: Item = articles.articleStorage.itemList.find(
-    (value) => value.id === itemId,
-  )
-
-  const newTitle = item?.title || 'No article title'
+  const newTitle = item?.title || 'No article title';
   if (props.navigation.getParam('title') !== newTitle) {
-    props.navigation.setParams({ title: newTitle })
+    props.navigation.setParams({ title: newTitle });
   }
 
-  const rating = articles.getItemUserRating(item)
+  const rating = ArticleControl.getItemUserRating(articleContext, item);
 
   return (
     <View style={{ flexDirection: 'column', flex: 1 }}>
@@ -43,24 +41,70 @@ export function ArticleWebView(props: NavigationScreenProps) {
         }
         incognito={true}
         style={{ marginTop: 20 }}
+        onLoadEnd={() => setLoading(false)}
+        onLoadStart={() => setLoading(true)}
       />
       <View style={{ flexDirection: 'row', margin: 5 }}>
         <View style={{ alignItems: 'flex-start', flexDirection: 'row' }}>
-          <View style={{ margin: 4 }}>
-            <Button title="<" onPress={() => webView.goBack()}></Button>
-          </View>
-          <View style={{ margin: 4 }}>
-            <Button title=">" onPress={() => webView.goForward()}></Button>
-          </View>
-          <View style={{ margin: 4 }}>
-            <Button title="reload" onPress={() => webView.reload()}></Button>
-          </View>
-          <View style={{ margin: 4 }}>
-            <Button title="stop" onPress={() => webView.stopLoading()}></Button>
-          </View>
+          <Icon.Button
+            key='back'
+            iconStyle={{ marginRight: 0 }}
+            name='arrow-left'
+            solid={false}
+            color={Palette.mainForeground}
+            backgroundColor="transparent"
+            onPress={() => props.navigation.goBack()}
+          />
+          <Icon.Button
+            key='forward'
+            iconStyle={{ marginRight: 0 }}
+            name='arrow-right'
+            solid={false}
+            color={Palette.mainForeground}
+            backgroundColor="transparent"
+            onPress={() => webView.goForward()}
+          />
+          <Icon.Button
+            key='reload'
+            iconStyle={{ marginRight: 0 }}
+            name='sync'
+            solid={false}
+            color={Palette.mainForeground}
+            backgroundColor="transparent"
+            onPress={() => webView.reload()}
+          />
+          {loading ? (
+            <Icon.Button
+              key='stop'
+              iconStyle={{ marginRight: 0 }}
+              name='stop'
+              solid={!!rating}
+              color={
+                rating ? Palette.warningForeground : Palette.mainForeground
+              }
+              backgroundColor="transparent"
+              onPress={() => webView.stopLoading()}
+            />
+          ) : (
+            <Icon.Button
+              key='close'
+              iconStyle={{ marginRight: 0 }}
+              name='times'
+              solid={!!rating}
+              color={
+                rating ? Palette.warningForeground : Palette.mainForeground
+              }
+              backgroundColor="transparent"
+              onPress={() => props.navigation.goBack()}
+            />
+          )}
         </View>
         <View
-          style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end' }}
+          style={{
+            flex: 1,
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+          }}
         >
           {rating > 1 && <Text style={{ marginRight: 4 }}>{`+${rating}`}</Text>}
           <Icon.Button
@@ -70,7 +114,7 @@ export function ArticleWebView(props: NavigationScreenProps) {
             solid={!!rating}
             color={rating ? Palette.warningForeground : Palette.mainForeground}
             backgroundColor="transparent"
-            onPress={() => articles.rateItem(item)}
+            onPress={() => ArticleControl.rateItem(articleContext, item)}
           ></Icon.Button>
           <Icon.Button
             name="trash"
@@ -78,25 +122,26 @@ export function ArticleWebView(props: NavigationScreenProps) {
             backgroundColor="transparent"
             onPress={() => {
               // articles.removeItem(item)
-              const currentUserRemovedIt = articles.getItemUserRating(item) < 0
+              const currentUserRemovedIt =
+                ArticleControl.getItemUserRating(articleContext, item) < 0;
               if (currentUserRemovedIt) {
-                articles.rateItem(item, 0)
+                ArticleControl.rateItem(articleContext, item, 0);
               } else {
-                articles.rateItem(item, -1)
+                ArticleControl.rateItem(articleContext, item, -1);
               }
 
-              props.navigation.goBack()
+              props.navigation.goBack();
             }}
           ></Icon.Button>
         </View>
       </View>
     </View>
-  )
+  );
 }
 
 ArticleWebView.navigationOptions = ({ navigation }) => {
-  const { state } = navigation
+  const { state } = navigation;
   return {
     title: `${state.params.title}`,
-  }
-}
+  };
+};

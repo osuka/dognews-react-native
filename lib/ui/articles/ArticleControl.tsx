@@ -1,117 +1,162 @@
-import { createContext, useContext } from 'react'
+import React from 'react';
+import { createContext, useContext } from 'react';
 
-import { Item, NewsItemRating } from '../../models/items'
+import { Item } from '../../models/items';
+import { ItemService } from '../../services/items';
+import { LoginState } from '../../models/login';
+import { LoginContext } from '../auth/Login';
 
-const USER = 'osuka' // TODO: retrieve user name from Login State
+const USER = 'osuka'; // TODO: retrieve user name from Login State
 
-// UI State: since the list is of limited length, we keep
-// a copy in memory
+//
 
-class ArticleStorage {
-  itemList: Array<Item> = []
-  fetchingStatus: boolean = false
-  // these setters need to be replaced with setters from useState
-  setItemList: (itemList: Array<Item>) => void
-  setFetchingStatus: (fetchingStatus: boolean) => void
-}
+export type ArticleContextType = {
+  itemList: Array<Item>;
+  setItemList: (items: Array<Item>) => void;
+  fetchingStatus: boolean;
+  setFetchingStatus: (status: boolean) => void;
 
-// We use a react context to store and share the data
+  source: string; // 'api' for moderation API call w/login, URL for static list
+};
 
-export const ArticleContext = createContext<ArticleStorage>(
-  new ArticleStorage()
-)
-
-// An easier way to use this that to use the context all the time
-
-export function ArticleControl(): {
-  fetchNews: () => void
-  articleStorage: ArticleStorage
-  rateItem: (item: Item, value?: number) => void
-  getItemUserRating: (item: Item) => number
-  removeItem: (item: Item) => void
-} {
-  const articleStorage = useContext(ArticleContext);
-
-  // Adds an error an article object that contains error info
-  function showError(title: string, body: string) {
-    articleStorage.fetchingStatus = false;
-    console.log(`Error: ${title}\n${body}`);
-  }
-
+export const ArticleControl = {
   /**
    * Retrieves an updated list of news articles from external server
-   *
-   * The list is stored inside 'articleStorage', exported from this module.
    */
-  const fetchNews = async () => {
-    if (articleStorage.fetchingStatus) {
+  async fetchNews(ctx: ArticleContextType, loginStatus: LoginState) {
+    console.log('initiating load');
+    if (ctx.fetchingStatus) {
       // poor man's critical section
       return;
     }
-
-    articleStorage.setFetchingStatus(true);
+    console.log('start fetch', JSON.stringify(loginStatus), ctx.fetchingStatus);
 
     try {
-      const response = await fetch(
-        'https://gatillos.com/onlydognews-assets/extracted-news-items.json',
-      );
+      ctx.setFetchingStatus(true);
 
-      if (response.status !== 200) {
-        showError('Error loading', response.statusText);
+      let responseJson;
+
+      if (ctx.source === 'api') {
+        responseJson = await ItemService.getAll(loginStatus);
+      } else {
+        responseJson = await fetch('https://onlydognews.com/latest-news.json');
+        responseJson = await responseJson?.json();
+      }
+
+      if (!responseJson) {
+        // TODO: do something with this information
+        console.log('No articles');
         return;
       }
 
-      const responseJson = await response.json(); // reads the body in full here
-
+      console.log(responseJson);
       const filteredNews = responseJson.filter(
         (item: Item) => item.sentiment !== 'bad',
       );
 
+      // there are some differences between the feed and the API
+      // the api returns 'url' as the URL of the item inside the API, ie http://10.0.2.2:8000/newsItem/4
+      // we can use that as the id
+      if (ctx.source === 'api') {
+        filteredNews.forEach((item: Item) => {
+          item.id = item.url;
+          item.url = item['target_url'];
+        });
+      }
+
       // merge/add items
-      const existingIds: Array<string> = articleStorage.itemList.map(
+      const existingIds: Array<string> = ctx.itemList.map(
         (item: Item) => item.id,
       );
 
       const newList = filteredNews
         .filter((item: Item) => !existingIds.find((id) => item.id === id))
-        .concat(articleStorage.itemList);
+        .concat(ctx.itemList);
 
-      articleStorage.setItemList(newList);
-    } catch (e) {
-      showError('Error reading item data', `${e}`);
+      ctx.setItemList(newList);
     } finally {
-      articleStorage.setFetchingStatus(false);
+      ctx.setFetchingStatus(false);
     }
-  }
+  },
 
-  const getItemUserRating = (item: Item): number => {
+  findItem(ctx: ArticleContextType, itemId: string): Item {
+    return ctx.itemList?.find((value) => value.id === itemId);
+  },
+
+  getAllItems(ctx: ArticleContextType): Array<Item> {
+    return ctx.itemList;
+  },
+
+  getItemUserRating(ctx: ArticleContextType, item: Item): number {
     return item?.ratings?.[USER]?.rating || 0;
-  }
+  },
 
-  const rateItem = (item: Item, value?: number) => {
+  rateItem(ctx: ArticleContextType, item: Item, value?: number) {
     item.ratings = item.ratings || {};
     item.ratings[USER] = {
       rating:
-        typeof value === 'number' ? value : (getItemUserRating(item) + 1) % 6,
+        typeof value === 'number'
+          ? value
+          : (ArticleControl.getItemUserRating(ctx, item) + 1) % 6,
       date: new Date().toUTCString(),
     };
     // force reload
-    articleStorage.setItemList(articleStorage.itemList.slice());
-  }
+    ctx.setItemList(ctx.itemList.slice());
+  },
 
-  const removeItem = (item: Item, value?: number) => {
-    articleStorage.setItemList(
-      [].concat(
-        articleStorage.itemList.filter((value) => value.id !== item.id),
-      ),
+  removeItem(ctx: ArticleContextType, item: Item) {
+    ctx.setItemList(
+      [].concat(ctx.itemList.filter((value) => value.id !== item.id)),
     );
-  }
+  },
 
-  return {
-    fetchNews,
-    articleStorage,
-    rateItem,
-    getItemUserRating,
-    removeItem,
-  }
-}
+  async fetchFeedNews(ctx: ArticleContextType, loginStatus: LoginState) {
+    console.log('load fetch', JSON.stringify(loginStatus), ctx.fetchingStatus);
+    if (ctx.fetchingStatus) {
+      // poor man's critical section
+      return;
+    }
+    console.log('start fetch', JSON.stringify(loginStatus));
+
+    try {
+      ctx.setFetchingStatus(true);
+
+      const response = await fetch('https://onlydognews.com/latest-news.json');
+
+      if (response.status !== 200) {
+        const json = await response.json();
+        console.error(response.status, json);
+        return;
+      }
+
+      const responseJson = await response.json(); // reads the body in full here
+      console.log(responseJson);
+
+      // merge/add items
+      const existingIds: Array<string> = ctx.itemList.map(
+        (item: Item) => item.id,
+      );
+
+      const newList = responseJson
+        .filter((item: Item) => !existingIds.find((id) => item.id === id))
+        .concat(ctx.itemList);
+
+      ctx.setItemList(newList);
+      console.log('this has been set to a new object', newList.length);
+
+      if (!responseJson) {
+        // TODO: do something with this information
+        console.log('No news');
+        return;
+      }
+    } finally {
+      ctx.setFetchingStatus(false);
+    }
+  },
+};
+
+//
+
+export const ArticleContext = React.createContext<ArticleContextType>(
+  undefined,
+);
