@@ -12,11 +12,6 @@ export const ItemService = {
     headers.append('Authorization', `Token ${loginStatus.accessToken}`);
 
     try {
-      console.log(
-        `Querying ${authConfig.direct.baseUrl}/newsItem/ with ${JSON.stringify(
-          headers
-        )}`,
-      );
       let response = await fetch(`${authConfig.direct.baseUrl}/newsItem/`, {
         method: 'GET',
         headers,

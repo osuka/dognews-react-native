@@ -24,12 +24,10 @@ export const ArticleControl = {
    * Retrieves an updated list of news articles from external server
    */
   async fetchNews(ctx: ArticleContextType, loginStatus: LoginState) {
-    console.log('initiating load');
     if (ctx.fetchingStatus) {
       // poor man's critical section
       return;
     }
-    console.log('start fetch', JSON.stringify(loginStatus), ctx.fetchingStatus);
 
     try {
       ctx.setFetchingStatus(true);
@@ -49,7 +47,6 @@ export const ArticleControl = {
         return;
       }
 
-      console.log(responseJson);
       const filteredNews = responseJson.filter(
         (item: Item) => item.sentiment !== 'bad',
       );
@@ -111,12 +108,10 @@ export const ArticleControl = {
   },
 
   async fetchFeedNews(ctx: ArticleContextType, loginStatus: LoginState) {
-    console.log('load fetch', JSON.stringify(loginStatus), ctx.fetchingStatus);
     if (ctx.fetchingStatus) {
       // poor man's critical section
       return;
     }
-    console.log('start fetch', JSON.stringify(loginStatus));
 
     try {
       ctx.setFetchingStatus(true);
@@ -130,7 +125,6 @@ export const ArticleControl = {
       }
 
       const responseJson = await response.json(); // reads the body in full here
-      console.log(responseJson);
 
       // merge/add items
       const existingIds: Array<string> = ctx.itemList.map(
@@ -142,7 +136,6 @@ export const ArticleControl = {
         .concat(ctx.itemList);
 
       ctx.setItemList(newList);
-      console.log('this has been set to a new object', newList.length);
 
       if (!responseJson) {
         // TODO: do something with this information

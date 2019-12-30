@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, Image, Button } from 'react-native';
 import {
   ArticleContext,
   ArticleContextType,
-  LatestArticlesContextType,
 } from './lib/ui/articles/ArticleControl';
 import { Item } from './lib/models/items';
 import {
@@ -13,13 +12,11 @@ import {
   History,
   useHistory,
   BackButton,
-  create,
+  Redirect,
 } from 'react-router-native';
-import HTML from 'react-native-render-html';
-import { LoginHome, LoginContextType, LoginContext } from './lib/ui/auth/Login';
+import { LoginHome, LoginContext } from './lib/ui/auth/Login';
 import { LoginState } from './lib/models/login';
 import { ArticleList } from './lib/ui/articles/ArticleList';
-import { Article } from './lib/ui/articles/Article';
 
 function NoMatch({ location }) {
   return <Text style={styles.header}>No match for {location.pathname}</Text>;
@@ -49,6 +46,8 @@ function applyBrowserLocationBlocker(history: History) {
     currentLocation = nextLocation;
   });
 }
+
+// -----------------------
 
 export const AppMain = () => {
   const [loginStatus, setLoginStatus] = React.useState({
@@ -83,34 +82,51 @@ export const AppMain = () => {
   let history = useHistory();
   applyBrowserLocationBlocker(history);
 
-  // React.useEffect(() => {
-  //   // effects can't return promises - this will work because
-  //   // fetchNews returns a promise that will be handled by
-  //   // the pending async promises microtasrrk in V8
-  //   moderationArticleContext.fetchNews();
-  // }, []);
-
   return (
     <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
       <BackButton />
       <View style={styles.nav}>
-        <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
-          <Text>Home</Text>
+        <Link
+          to="/articles"
+          underlayColor="#f0f4f7"
+          style={styles.navItem}
+          replace={true}
+        >
+          <Text
+            style={
+              history.location.pathname === '/articles'
+                ? { textDecorationLine: 'underline' }
+                : {}
+            }
+          >
+            Public Feed
+          </Text>
         </Link>
-        <Link to="/articles" underlayColor="#f0f4f7" style={styles.navItem}>
-          <Text>Public Feed</Text>
+        <Link
+          to="/moderation"
+          underlayColor="#f0f4f7"
+          style={styles.navItem}
+          replace={true}
+        >
+          <Text
+            style={
+              history.location.pathname === '/moderation'
+                ? { textDecorationLine: 'underline' }
+                : {}
+            }
+          >
+            Queue
+          </Text>
         </Link>
-        <Link to="/moderation" underlayColor="#f0f4f7" style={styles.navItem}>
-          <Text>Queue</Text>
-        </Link>
-        {!loginStatus.accessToken ? (
-          <Link to="/login/home" underlayColor="#f0f4f7" style={styles.navItem}>
-            <Text>{`Login`}</Text>
-          </Link>
-        ) : (
-          <Link to="/logout" underlayColor="#f0f4f7" style={styles.navItem}>
-            <Text>{`Logout`}</Text>
-          </Link>
+        {loginStatus.accessToken && (
+          <LoginContext.Consumer>
+            {({ setLoginStatus }) => (
+              <Button
+                title="Logout"
+                onPress={() => setLoginStatus({ username: '' } as LoginState)}
+              />
+            )}
+          </LoginContext.Consumer>
         )}
       </View>
 
@@ -139,6 +155,42 @@ export const AppMain = () => {
               </View>
             )}
           />
+
+          <Route exact path="/help/okta">
+            <View>
+              <Text style={{ padding: 25, fontWeight: 'bold', fontSize: 24 }}>
+                What is Okta?
+              </Text>
+              <Text style={{ paddingLeft: 50, paddingRight: 50 }}>
+                You can register and login using third party providers of user
+                management. Okta is one of them.
+              </Text>
+              <Text
+                style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
+              >
+                A third party Identity Provider store your personal details and
+                helps us to ensure your data is protected.
+              </Text>
+              <Text
+                style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
+              >
+                You can use Okta as an identity provider in various
+                applications, the same way you can register using Google or
+                Facebook.
+              </Text>
+              <Text
+                onPress={() => history.goBack()}
+                style={{
+                  textDecorationLine: 'underline',
+                  paddingTop: 30,
+                  textAlign: 'center',
+                }}
+              >
+                Go Back
+              </Text>
+            </View>
+          </Route>
+
           <Route
             exact
             path="/moderation"
@@ -148,15 +200,7 @@ export const AppMain = () => {
                   <ArticleList />
                 </ArticleContext.Provider>
               ) : (
-                <View style={{ alignSelf: 'center', padding: 40 }}>
-                  <Text style={{ marginBottom: 30}}>
-                    In order to moderate submissions, you will need a registered
-                    user. If you have one, please login
-                  </Text>
-                  <Link to="/login/home" underlayColor="#f0f4f7">
-                    <Button title='Login' onPress={() => history.push('/login/home')}/>
-                  </Link>
-                </View>
+                <Redirect to="/login/home/moderation" />
               )
             }
           />

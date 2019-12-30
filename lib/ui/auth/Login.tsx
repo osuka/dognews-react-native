@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-import React, { Fragment, Component, useState } from 'react'
+import React, { Fragment, Component, useState } from 'react';
 import {
   SafeAreaView,
   Button,
@@ -22,93 +22,140 @@ import {
   ScrollView,
   UIManager,
   LayoutAnimation,
-  TouchableHighlight
-} from 'react-native'
+  TouchableHighlight,
+  Image,
+} from 'react-native';
 
-import { Route, useHistory } from 'react-router-native'
-import { authorize, refresh, revoke } from 'react-native-app-auth' // oauth2
+import { Route, useHistory, Redirect, Link } from 'react-router-native';
+import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
 
-import Spinner from 'react-native-loading-spinner-overlay'
+import Spinner from 'react-native-loading-spinner-overlay';
 
-import { login } from '../../services/directauth'
-import { LoginState } from '../../models/login'
-import authConfig from '../../../auth.config'
-import { NavigationScreenProps } from 'react-navigation'
-import { State } from 'react-native-gesture-handler'
+import { login } from '../../services/directauth';
+import { LoginState } from '../../models/login';
+import authConfig from '../../../auth.config';
 
 // ============ TODO: login storage (?LocalStorage?)
 
 export type LoginContextType = {
-  loginStatus: LoginState
-  setLoginStatus: (s: LoginState) => void
-}
-export const LoginContext = React.createContext<LoginContextType>({ loginStatus: { username: ''}, setLoginStatus: () => {}});
+  loginStatus: LoginState;
+  setLoginStatus: (s: LoginState) => void;
+};
+export const LoginContext = React.createContext<LoginContextType>({
+  loginStatus: { username: '' },
+  setLoginStatus: () => {},
+});
 
 // ============ auth components
 
 // ============ we offer various types of login
 
 export const LoginHome = ({ match }) => {
-  let history = useHistory()
+  let history = useHistory();
 
-  let redirectTo = match.params.from;
+  let redirectTo = '/' + (match.params.from || '');
 
   return (
     <LoginContext.Consumer>
-      {({loginStatus, setLoginStatus}) => (
-        <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
+      {({ loginStatus, setLoginStatus }) => (
+        <View
+          style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: "space-around" }}
+        >
           {loginStatus.accessToken ? (
-            <Text>Logged in</Text>
+            <Redirect to={redirectTo} />
           ) : (
-            <View style={{ flex: 1, flexDirection: 'column' }}>
-              <View style={styles.button}>
-                <LoginOkta loginStatus={loginStatus} setLoginStatus={setLoginStatus}/>
+            <View>
+              <View style={{ alignItems: 'center', padding: 30 }}>
+                <Image
+                  source={require('../../../assets/onlydognews-logo-main.png')}
+                />
               </View>
               <Route path="/login/home">
-                <Button
-                  title="Login directly"
-                  onPress={() => history.push('/login/direct')}
+                <LoginOkta
+                  loginStatus={loginStatus}
+                  setLoginStatus={setLoginStatus}
                 />
+                <Text
+                  style={{
+                    marginTop: 20,
+                    paddingLeft: 30,
+                    paddingRight: 30,
+                    textAlign: 'center',
+                  }}
+                >
+                  You can help moderate and rank articles on Only Dog News by
+                  registering as a user and requesting moderator access.
+                </Text>
+                <Text
+                  style={{
+                    textDecorationLine: 'underline',
+                    textAlign: 'right',
+                    paddingRight: 20,
+                    marginTop: 40,
+                    alignSelf: "flex-end",
+                  }}
+                  onPress={() => history.push('/login/direct')}
+                >
+                  I am an administrator...
+                </Text>
+                {/* <Text
+                  style={{
+                    textDecorationLine: 'underline',
+                    marginTop: 12,
+                    alignContent: 'stretch',
+                    textAlign: 'right',
+                    paddingRight: 20,
+                    paddingBottom: 60,
+                  }}
+                  onPress={() => { console.log('hola'); history.goBack(); }}
+                >
+                  Go back
+                </Text> */}
               </Route>
               <Route path="/login/direct">
-                <LoginDirect loginStatus={loginStatus} setLoginStatus={(s: LoginState) => setLoginStatus(s)}/>
+                <LoginDirect
+                  loginStatus={loginStatus}
+                  setLoginStatus={(s: LoginState) => {
+                    setLoginStatus(s);
+                  }}
+                />
               </Route>
-              <View style={styles.button}>
-                <Button title="Cancel" onPress={() => history.goBack()}/>
-              </View>
             </View>
           )}
         </View>
       )}
     </LoginContext.Consumer>
-  )
-}
+  );
+};
 
 // ============= direct login
 
-function LoginDirect(props: { loginStatus: LoginState, setLoginStatus: (s: LoginState) => void}) {
-  const {loginStatus, setLoginStatus} = props;
+function LoginDirect(props: {
+  loginStatus: LoginState;
+  setLoginStatus: (s: LoginState) => void;
+}) {
+  const { loginStatus, setLoginStatus } = props;
   let history = useHistory();
 
   async function initiateLogin() {
-    setLoginStatus({ ...loginStatus, progress: true })
+    setLoginStatus({ ...loginStatus, progress: true });
     try {
-      setLoginStatus({ ...loginStatus, progress: false, error: '' })
+      setLoginStatus({ ...loginStatus, progress: false, error: '' });
       const token = await login(
         authConfig.direct.baseUrl,
         loginStatus.username,
         loginStatus.password,
-      )
-      setLoginStatus({ ...loginStatus, accessToken: token});
+      );
+      setLoginStatus({ ...loginStatus, accessToken: token });
       history.goBack();
     } catch (err) {
-      setLoginStatus({ ...loginStatus, progress: false, error: err.message })
+      setLoginStatus({ ...loginStatus, progress: false, error: err.message });
     }
   }
 
   return (
-    <View style={{backgroundColor: '#fffdf6', padding: 12}}>
-      <Text style={{alignSelf:"center"}}>Direct Login</Text>
+    <View style={{ backgroundColor: '#fffdf6', padding: 24 }}>
+      <Text style={{ alignSelf: 'center' }}>Administrator login</Text>
       <TextInput
         style={styles.textInput}
         placeholder="Login"
@@ -120,12 +167,14 @@ function LoginDirect(props: { loginStatus: LoginState, setLoginStatus: (s: Login
         secureTextEntry={true}
         onChangeText={(text) => (loginStatus.password = text)}
       />
-      {!!loginStatus.error && <Text style={styles.error}>{loginStatus.error}</Text>}
-      <View style={{marginTop: 12}}>
+      {!!loginStatus.error && (
+        <Text style={styles.error}>{loginStatus.error}</Text>
+      )}
+      <View style={{ marginTop: 12 }}>
         <Button
           onPress={async () => {
-            loginStatus.progress = true
-            await initiateLogin()
+            loginStatus.progress = true;
+            await initiateLogin();
           }}
           title="Login"
         />
@@ -143,30 +192,31 @@ const config = {
   clientId: authConfig.oidc.clientId,
   redirectUrl: authConfig.oidc.redirectUri,
   scopes: authConfig.oidc.scopes,
-}
+};
 
-function LoginOkta(props: { loginStatus: LoginState, setLoginStatus: (s: LoginState) => void}) {
-  const {loginStatus, setLoginStatus} = props;
+function LoginOkta(props: {
+  loginStatus: LoginState;
+  setLoginStatus: (s: LoginState) => void;
+}) {
+  const { loginStatus, setLoginStatus } = props;
 
   const initiateAuthorize = async () => {
     try {
-      const authState = await authorize(config)
-      setLoginStatus(
-        {
-          ...loginStatus,
-          error: '',
-          progress: true,
-          accessToken: authState.accessToken,
-          accessTokenExpirationDate: authState.accessTokenExpirationDate,
-          refreshToken: authState.refreshToken,
-        }
-      );
+      const authState = await authorize(config);
+      setLoginStatus({
+        ...loginStatus,
+        error: '',
+        progress: true,
+        accessToken: authState.accessToken,
+        accessTokenExpirationDate: authState.accessTokenExpirationDate,
+        refreshToken: authState.refreshToken,
+      });
     } catch (error) {
       // it will come back here in case of it not being able to load
       // or if the user closes the browser
       setLoginStatus({ username: loginStatus.username });
     }
-  }
+  };
 
   const initiateRefresh = async () => {
     try {
@@ -174,10 +224,10 @@ function LoginOkta(props: { loginStatus: LoginState, setLoginStatus: (s: LoginSt
         ...loginStatus,
         progress: true,
         error: '',
-      })
+      });
       const authState = await refresh(config, {
         refreshToken: loginStatus.refreshToken,
-      })
+      });
       setLoginStatus({
         ...loginStatus,
         error: '',
@@ -187,12 +237,12 @@ function LoginOkta(props: { loginStatus: LoginState, setLoginStatus: (s: LoginSt
           authState.accessTokenExpirationDate ||
           loginStatus.accessTokenExpirationDate,
         refreshToken: authState.refreshToken || loginStatus.refreshToken,
-      })
+      });
     } catch (error) {
       setLoginStatus({ username: loginStatus.username });
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   const initiateRevoke = async () => {
     try {
@@ -200,10 +250,10 @@ function LoginOkta(props: { loginStatus: LoginState, setLoginStatus: (s: LoginSt
         ...loginStatus,
         progress: true,
         error: '',
-      })
+      });
       await revoke(config, {
         tokenToRevoke: loginStatus.refreshToken || loginStatus.accessToken,
-      })
+      });
       setLoginStatus({
         ...loginStatus,
         error: '',
@@ -211,20 +261,29 @@ function LoginOkta(props: { loginStatus: LoginState, setLoginStatus: (s: LoginSt
         accessToken: '',
         accessTokenExpirationDate: '',
         refreshToken: '',
-      })
+      });
     } catch (error) {
       setLoginStatus({ username: loginStatus.username });
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   return (
-    <Button
-      onPress={initiateAuthorize}
-      title="Login with Okta"
-      color="#017CC0"
-    ></Button>
-  )
+    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+      <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
+        <Button
+          onPress={initiateAuthorize}
+          title="Login or register via Okta..."
+          color="#017CC0"
+        ></Button>
+        <Link to="/help/okta">
+          <Text style={{ textDecorationLine: 'underline', paddingTop: 16 }}>
+            What is okta?
+          </Text>
+        </Link>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -269,4 +328,4 @@ const styles = StyleSheet.create({
     color: '#AF0608',
     textAlign: 'center',
   },
-})
+});

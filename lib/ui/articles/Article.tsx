@@ -10,7 +10,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import HTML from 'react-native-render-html';
+import { fromString } from 'html-to-text';
 
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
@@ -191,19 +191,18 @@ export function Article({
                     padding: 6,
                   }}
                 >
-                  <HTML
+                  <Text
                     style={{
                       textAlign: 'left',
                       padding: 6,
                       color: Palette.mainForeground,
                     }}
-                    html={
-                      item.summary ||
-                      item.description ||
-                      item.body ||
-                      '<i>No summary</i>'
-                    }
-                  />
+                  >{fromString(
+                    item.summary ||
+                    item.description ||
+                    item.body ||
+                    'No summary'
+                  )}</Text>
                 </View>
               </View>
             )}

@@ -1,10 +1,11 @@
-import React from 'react';
-import { FlatList, Button, View, Text } from 'react-native';
+import React, { useContext } from 'react';
+import { FlatList, Button, View, Text, RefreshControl } from 'react-native';
 import {
   createAppContainer,
   createStackNavigator,
   NavigationScreenProps,
 } from 'react-navigation';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import { Item } from '../../models/items';
 import {
@@ -14,7 +15,7 @@ import {
 } from './ArticleControl';
 import { Article } from './Article';
 import { ArticleWebView } from './ArticleWebView';
-import { LoginContext } from '../auth/Login';
+import { LoginContext, LoginContextType } from '../auth/Login';
 
 const ItemSeparator = () => {
   return (
@@ -23,29 +24,42 @@ const ItemSeparator = () => {
 };
 
 function ArticleListScreen(props: NavigationScreenProps) {
+  const loginContext = useContext<LoginContextType>(LoginContext);
+  const articleContext = useContext<ArticleContextType>(ArticleContext);
+
+  const reload = () => {
+    (async () => await ArticleControl.fetchNews(
+      articleContext,
+      loginContext.loginStatus))();
+  }
+
+  if (!articleContext.fetchingStatus && articleContext.itemList?.length === 0) {
+    // effects can't return promises - this will work because
+    // fetchNews returns a promise that will be handled by
+    // the pending async promises microtask in V8
+    React.useEffect(reload, []);
+  }
+
   return (
     <ArticleContext.Consumer>
       {(ctx) => (
         <View>
-          <LoginContext.Consumer>
-            {(loginContext) => (
-              <Button
-                title="update"
-                onPress={async () => {
-                  await ArticleControl.fetchNews(ctx, loginContext.loginStatus);
-                }}
-              />
-            )}
-          </LoginContext.Consumer>
+          <Spinner
+            visible={ctx.fetchingStatus}
+            textContent={'Loading...'}
+            textStyle={{ color: '#e0e0e0' }}
+          />
           <FlatList
             data={ctx.itemList}
+            refreshControl={
+              <RefreshControl refreshing={ctx.fetchingStatus} onRefresh={reload} />
+            }
             renderItem={({ item, index }: { item: Item; index: number }) => (
               <Article
                 key={item.id}
                 item={item}
                 positionInList={index}
                 totalItems={ctx.itemList.length}
-                // onArticleClick={() => history.push(`/articles/${item.id}`)}
                 onArticleClick={() =>
                   props.navigation.navigate('ArticleDetail', {
                     itemId: item.id,
