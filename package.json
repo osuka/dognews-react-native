@@ -12,6 +12,7 @@
         "fontawesome": "cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/"
     },
     "dependencies": {
+        "@react-native-community/async-storage": "^1.7.1",
         "@types/lodash": "^4.14.149",
         "buffer": "^5.4.3",
         "cd": "0.3.x",
@@ -53,6 +54,7 @@
         "identity-obj-proxy": "^3.0.0",
         "jest": "^24.9.0",
         "metro-react-native-babel-preset": "0.54.x",
+        "mock-async-storage": "^2.2.0",
         "prettier": "1.x.x",
         "react-native-cli": "2.x.x",
         "react-test-renderer": "^16.12.0",

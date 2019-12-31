@@ -29,13 +29,13 @@ import {
 import { Route, useHistory, Redirect, Link } from 'react-router-native';
 import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
 
-import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import { login } from '../../services/directauth';
 import { LoginState } from '../../models/login';
 import authConfig from '../../../auth.config';
 
-// ============ TODO: login storage (?LocalStorage?)
+// ============ login storage (session and persistent)
 
 export type LoginContextType = {
   loginStatus: LoginState;
@@ -45,6 +45,36 @@ export const LoginContext = React.createContext<LoginContextType>({
   loginStatus: { username: '' },
   setLoginStatus: () => {},
 });
+
+export function loadLoginFromStorage(ctx: LoginContextType) {
+  (async () => {
+    try {
+      const loginStatus = await AsyncStorage.getItem('@loginStatus');
+      if (loginStatus !== null) {
+        ctx.setLoginStatus(JSON.parse(loginStatus));
+        console.log('Login restored');
+      }
+    } catch (e) {
+      // ignore
+      console.log('Error while retrieving login', e);
+    }
+  })();
+}
+
+export function persistLoginStatus(loginStatus: LoginState) {
+  (async () => {
+    try {
+      const value = await AsyncStorage.setItem(
+        '@loginStatus',
+        JSON.stringify(loginStatus),
+      );
+      console.log('Login status stored');
+    } catch (e) {
+      // ignore
+      console.log('Error while saving login', e);
+    }
+  })();
+}
 
 // ============ auth components
 
@@ -59,7 +89,12 @@ export const LoginHome = ({ match }) => {
     <LoginContext.Consumer>
       {({ loginStatus, setLoginStatus }) => (
         <View
-          style={{ flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: "space-around" }}
+          style={{
+            flex: 1,
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+          }}
         >
           {loginStatus.accessToken ? (
             <Redirect to={redirectTo} />
@@ -92,7 +127,7 @@ export const LoginHome = ({ match }) => {
                     textAlign: 'right',
                     paddingRight: 20,
                     marginTop: 40,
-                    alignSelf: "flex-end",
+                    alignSelf: 'flex-end',
                   }}
                   onPress={() => history.push('/login/direct')}
                 >
@@ -115,9 +150,7 @@ export const LoginHome = ({ match }) => {
               <Route path="/login/direct">
                 <LoginDirect
                   loginStatus={loginStatus}
-                  setLoginStatus={(s: LoginState) => {
-                    setLoginStatus(s);
-                  }}
+                  setLoginStatus={setLoginStatus}
                 />
               </Route>
             </View>

@@ -14,7 +14,12 @@ import {
   BackButton,
   Redirect,
 } from 'react-router-native';
-import { LoginHome, LoginContext } from './lib/ui/auth/Login';
+import {
+  LoginHome,
+  LoginContext,
+  loadLoginFromStorage,
+  persistLoginStatus
+} from './lib/ui/auth/Login';
 import { LoginState } from './lib/models/login';
 import { ArticleList } from './lib/ui/articles/ArticleList';
 
@@ -81,6 +86,16 @@ export const AppMain = () => {
 
   let history = useHistory();
   applyBrowserLocationBlocker(history);
+
+  // start by trying to recover login status from local storage
+  React.useEffect(() => {
+    loadLoginFromStorage({ loginStatus, setLoginStatus });
+  }, []);
+
+  // if login status is modified, save it
+  React.useEffect(() => {
+    persistLoginStatus(loginStatus);
+  }, [loginStatus]);
 
   return (
     <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>

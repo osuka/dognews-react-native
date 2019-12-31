@@ -1,3 +1,5 @@
+import MockAsyncStorage from 'mock-async-storage';
+
 // Jest environment setup
 //
 // this file is loaded by jest (due to jest.config.js)
@@ -48,3 +50,6 @@ jest.mock('react-native-gesture-handler', () => {
 // jest.mock('react-navigation-stack', () => {
 //   createStackNavigator: jest.fn()
 // });
+
+const mockImpl = new MockAsyncStorage();
+jest.mock('@react-native-community/async-storage', () => mockImpl);
