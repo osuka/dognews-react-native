@@ -2,7 +2,7 @@ import * as React from 'react';
 import { WebView } from 'react-native-webview';
 import { View, Text, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { NavigationScreenProps } from 'react-navigation';
+import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 import { Palette } from '../Palette';
 import { Item } from '../../models/items';
@@ -15,7 +15,7 @@ import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleCon
 // Note that it needs to be linked (npx react-native link react-native-webview)
 // so that the native part is added to the iOS and Android projects
 
-export function ArticleWebView(props: NavigationScreenProps) {
+export function ArticleWebView(props: NavigationStackScreenProps) {
   let webView: WebView;
   const [loading, setLoading] = React.useState(false);
   const articleContext = React.useContext(ArticleContext);

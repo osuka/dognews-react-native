@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
-import { FlatList, Button, View, Text, RefreshControl } from 'react-native';
+import { FlatList, View, Text, RefreshControl } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+
 import {
-  createAppContainer,
   createStackNavigator,
-  NavigationScreenProps,
-} from 'react-navigation';
+  NavigationStackScreenProps,
+} from 'react-navigation-stack';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import { Item } from '../../models/items';
@@ -23,15 +24,17 @@ const ItemSeparator = () => {
   );
 };
 
-function ArticleListScreen(props: NavigationScreenProps) {
+function ArticleListScreen(props: NavigationStackScreenProps) {
   const loginContext = useContext<LoginContextType>(LoginContext);
   const articleContext = useContext<ArticleContextType>(ArticleContext);
 
   const reload = () => {
-    (async () => await ArticleControl.fetchNews(
-      articleContext,
-      loginContext.loginStatus))();
-  }
+    (async () =>
+      await ArticleControl.fetchNews(
+        articleContext,
+        loginContext.loginStatus,
+      ))();
+  };
 
   if (!articleContext.fetchingStatus && articleContext.itemList?.length === 0) {
     // effects can't return promises - this will work because
@@ -52,7 +55,10 @@ function ArticleListScreen(props: NavigationScreenProps) {
           <FlatList
             data={ctx.itemList}
             refreshControl={
-              <RefreshControl refreshing={ctx.fetchingStatus} onRefresh={reload} />
+              <RefreshControl
+                refreshing={ctx.fetchingStatus}
+                onRefresh={reload}
+              />
             }
             renderItem={({ item, index }: { item: Item; index: number }) => (
               <Article
