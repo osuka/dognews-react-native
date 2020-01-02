@@ -46,34 +46,30 @@ export const LoginContext = React.createContext<LoginContextType>({
   setLoginStatus: () => {},
 });
 
-export function loadLoginFromStorage(ctx: LoginContextType) {
-  (async () => {
-    try {
-      const loginStatus = await AsyncStorage.getItem('@loginStatus');
-      if (loginStatus !== null) {
-        ctx.setLoginStatus(JSON.parse(loginStatus));
-        console.log('Login restored');
-      }
-    } catch (e) {
-      // ignore
-      console.log('Error while retrieving login', e);
+export async function loadLoginFromStorage(ctx: LoginContextType) {
+  try {
+    const loginStatus = await AsyncStorage.getItem('@loginStatus');
+    if (loginStatus !== null) {
+      ctx.setLoginStatus(JSON.parse(loginStatus));
+      console.log('Login restored');
     }
-  })();
+  } catch (e) {
+    // ignore
+    console.log('Error while retrieving login', e);
+  }
 }
 
-export function persistLoginStatus(loginStatus: LoginState) {
-  (async () => {
-    try {
-      const value = await AsyncStorage.setItem(
-        '@loginStatus',
-        JSON.stringify(loginStatus),
-      );
-      console.log('Login status stored');
-    } catch (e) {
-      // ignore
-      console.log('Error while saving login', e);
-    }
-  })();
+export async function persistLoginStatus(loginStatus: LoginState) {
+  try {
+    const value = await AsyncStorage.setItem(
+      '@loginStatus',
+      JSON.stringify(loginStatus),
+    );
+    console.log('Login status stored');
+  } catch (e) {
+    // ignore
+    console.log('Error while saving login', e);
+  }
 }
 
 // ============ auth components

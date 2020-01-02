@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, Image, Button } from 'react-native';
 import {
   ArticleContext,
   ArticleContextType,
+  ArticleControl,
 } from './lib/ui/articles/ArticleControl';
 import { Item } from './lib/models/items';
 import {
@@ -89,13 +90,24 @@ export const AppMain = () => {
 
   // start by trying to recover login status from local storage
   React.useEffect(() => {
-    loadLoginFromStorage({ loginStatus, setLoginStatus });
+    (async () => {
+      await loadLoginFromStorage({ loginStatus, setLoginStatus })
+      // if moderated items existed, restore them
+      await ArticleControl.restoreFromStorage('moderation', moderationArticleContext);
+      // fetch latest news
+      await ArticleControl.fetchNews(latestNewsArticleContext, loginStatus);
+    })();
   }, []);
 
   // if login status is modified, save it
   React.useEffect(() => {
-    persistLoginStatus(loginStatus);
+    (async () => await persistLoginStatus(loginStatus))();
   }, [loginStatus]);
+
+  // if moderated items are modified, save them
+  React.useEffect(() => {
+    (async () => await ArticleControl.persistToStorage('moderation', moderationArticleContext.itemList));
+  }, [moderationArticleContext.itemList]);
 
   return (
     <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>

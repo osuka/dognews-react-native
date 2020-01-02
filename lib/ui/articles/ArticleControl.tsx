@@ -5,6 +5,7 @@ import { Item } from '../../models/items';
 import { ItemService } from '../../services/items';
 import { LoginState } from '../../models/login';
 import { LoginContext } from '../auth/Login';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const USER = 'osuka'; // TODO: retrieve user name from Login State
 
@@ -105,6 +106,29 @@ export const ArticleControl = {
     ctx.setItemList(
       [].concat(ctx.itemList.filter((value) => value.id !== item.id)),
     );
+  },
+
+  async restoreFromStorage(prefix: string, ctx: ArticleContextType) {
+    try {
+      const items = await AsyncStorage.getItem(`@${prefix}`);
+      if (items !== null) {
+        ctx.setItemList(JSON.parse(items));
+        console.log(`${prefix} items restored`);
+      }
+    } catch (e) {
+      // ignore
+      console.log(`${prefix} Error while retrieving from local storage`, e);
+    }
+  },
+
+  async persistToStorage(prefix: string, itemList: Array<Item>) {
+    try {
+      await AsyncStorage.setItem(`@${prefix}`, JSON.stringify(itemList));
+      console.log(`${prefix} items saved`);
+    } catch (e) {
+      // ignore
+      console.log(`${prefix} Error while saving to local storage`, e);
+    }
   },
 
   async fetchFeedNews(ctx: ArticleContextType, loginStatus: LoginState) {

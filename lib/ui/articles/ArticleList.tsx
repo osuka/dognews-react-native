@@ -36,13 +36,6 @@ function ArticleListScreen(props: NavigationStackScreenProps) {
       ))();
   };
 
-  if (!articleContext.fetchingStatus && articleContext.itemList?.length === 0) {
-    // effects can't return promises - this will work because
-    // fetchNews returns a promise that will be handled by
-    // the pending async promises microtask in V8
-    React.useEffect(reload, []);
-  }
-
   return (
     <ArticleContext.Consumer>
       {(ctx) => (
