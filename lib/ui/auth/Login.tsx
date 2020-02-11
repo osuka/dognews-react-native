@@ -27,7 +27,7 @@ import {
 } from 'react-native';
 
 import { Route, useHistory, Redirect, Link } from 'react-router-native';
-import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
+import { authorize, refresh, revoke, AuthConfiguration } from 'react-native-app-auth'; // oauth2
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -68,7 +68,7 @@ export function persistLoginStatus(loginStatus: LoginState) {
         '@loginStatus',
         JSON.stringify(loginStatus),
       );
-      console.log('Login status stored');
+      console.log('Login status stored:', loginStatus);
     } catch (e) {
       // ignore
       console.log('Error while saving login', e);
@@ -220,13 +220,6 @@ function LoginDirect(props: {
 
 // ======================== login
 
-const config = {
-  issuer: authConfig.oidc.discoveryUri,
-  clientId: authConfig.oidc.clientId,
-  redirectUrl: authConfig.oidc.redirectUri,
-  scopes: authConfig.oidc.scopes,
-};
-
 function LoginOkta(props: {
   loginStatus: LoginState;
   setLoginStatus: (s: LoginState) => void;
@@ -235,7 +228,8 @@ function LoginOkta(props: {
 
   const initiateAuthorize = async () => {
     try {
-      const authState = await authorize(config);
+      const authState = await authorize(authConfig.auth0);
+      console.log('received', authState.accessToken);
       setLoginStatus({
         ...loginStatus,
         error: '',

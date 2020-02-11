@@ -9,5 +9,9 @@ export default {
   },
   direct: {
     baseUrl: 'http://10.0.2.2:8000'  // for android emulator, use localhost etc for local
+  },
+  auth0: {
+    clientId: "<CLIENTID>",
+    domain: "<DOMAIN>"
   }
 };

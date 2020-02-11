@@ -318,3 +318,33 @@ The callback comes via openURL app delegate, so we register our delegate that wi
 
 @end
 ```
+
+* Error on building android
+
+```
+» npx react-native run-android                              
+info Running jetifier to migrate libraries to AndroidX. You can disable it using "--no-jetifier" flag.
+Jetifier found 1054 file(s) to forward-jetify. Using 4 workers...
+info Starting JS server...
+info Installing the app...
+:ReactNative:Unexpected empty result of running 'npx --quiet --no-install react-native config' command from 'null' directory.
+:ReactNative:Running 'npx --quiet --no-install react-native config' command from 'null' directory failed.
+
+FAILURE: Build failed with an exception.
+
+* Where:
+Script '/home/oamat/Documents/code/dognews-checker-react/node_modules/@react-native-community/cli-platform-android/native_modules.gradle' line: 170
+
+* What went wrong:
+A problem occurred evaluating script.
+> Command `config` unrecognized. Make sure that you have run `npm install` and that you are inside a react-native project.
+...
+```
+
+
+Needs:
+
+```
+npm install --save react-native
+```
+
