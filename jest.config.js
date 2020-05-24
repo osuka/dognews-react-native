@@ -19,9 +19,14 @@ module.exports = {
 
   // By default jest doesn't transform ES6 js code from node_modules, we need to tell it to
   // do it for some (ie 'ignore all but these')
-  "transformIgnorePatterns": [
+  transformIgnorePatterns: [
     "node_modules/(?!react-native|react-navigation|@okta)/"
   ],
 
-  automock: false
+  unmockedModulePathPatterns: [
+    "react",
+    "react-native"
+  ],
+
+  automock: true
 };

@@ -19,5 +19,6 @@ it('renders correctly', () => {
   // check jest.config.js (setupFiles)
   //  general.ts, node_modules/react-native-gesture-handler/.../jestSetup.js
   // https://github.com/software-mansion/react-native-gesture-handler/issues/344
+
   renderer.create(<App />)
 })

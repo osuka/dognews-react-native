@@ -1,57 +1,57 @@
 import * as React from 'react';
-import { Text, View, StyleSheet, Image, Button } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from 'react-native';
 import {
   ArticleContext,
   ArticleContextType,
   ArticleControl,
 } from './lib/ui/articles/ArticleControl';
 import { Item } from './lib/models/items';
+
 import {
-  Route,
-  Link,
-  Switch,
-  History,
-  useHistory,
-  BackButton,
-  Redirect,
-} from 'react-router-native';
-import {
-  LoginHome,
+  LoginScreen,
   LoginContext,
   loadLoginFromStorage,
-  persistLoginStatus
+  persistLoginStatus,
 } from './lib/ui/auth/Login';
+import queueFactory from 'react-native-queue';
 import { LoginState } from './lib/models/login';
 import { ArticleList } from './lib/ui/articles/ArticleList';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Link, CommonActions } from '@react-navigation/native';
 
 function NoMatch({ location }) {
   return <Text style={styles.header}>No match for {location.pathname}</Text>;
 }
 
-// We need this until https://github.com/ReactTraining/react-router/issues/5362 is fixed
-// Currently clicking twice on the same route generates a new entry, it shouldn't if
-// it's in the same place
+// // We need this until https://github.com/ReactTraining/react-router/issues/5362 is fixed
+// // Currently clicking twice on the same route generates a new entry, it shouldn't if
+// // it's in the same place
 
-function applyBrowserLocationBlocker(history: History) {
-  if (history.isBrowserBlockerApplied) {
-    return; // we need to call block only once, else they accumulate
-    // note that this is not a perfect fix - reload AppMain will attempt to recreate it
-  }
-  history.isBrowserBlockerApplied = true; // monkey patching
-  let currentLocation = null;
+// function applyBrowserLocationBlocker(history: History) {
+//   if (history.isBrowserBlockerApplied) {
+//     return; // we need to call block only once, else they accumulate
+//     // note that this is not a perfect fix - reload AppMain will attempt to recreate it
+//   }
+//   history.isBrowserBlockerApplied = true; // monkey patching
+//   let currentLocation = null;
 
-  history.block((location, action) => {
-    const nextLocation = location.pathname + location.search;
+//   history.block((location, action) => {
+//     const nextLocation = location.pathname + location.search;
 
-    if (action === 'PUSH') {
-      if (currentLocation === nextLocation) {
-        return false;
-      }
-    }
+//     if (action === 'PUSH') {
+//       if (currentLocation === nextLocation) {
+//         return false;
+//       }
+//     }
 
-    currentLocation = nextLocation;
-  });
-}
+//     currentLocation = nextLocation;
+//   });
+// }
 
 // -----------------------
 
@@ -85,15 +85,18 @@ export const AppMain = () => {
     source: 'https://onlydognews.com/latest-news.json',
   };
 
-  let history = useHistory();
-  applyBrowserLocationBlocker(history);
+  // let history = useHistory();
+  // applyBrowserLocationBlocker(history);
 
   // start by trying to recover login status from local storage
   React.useEffect(() => {
     (async () => {
-      await loadLoginFromStorage({ loginStatus, setLoginStatus })
+      await loadLoginFromStorage({ loginStatus, setLoginStatus });
       // if moderated items existed, restore them
-      await ArticleControl.restoreFromStorage('moderation', moderationArticleContext);
+      await ArticleControl.restoreFromStorage(
+        'moderation',
+        moderationArticleContext,
+      );
       // fetch latest news
       await ArticleControl.fetchNews(latestNewsArticleContext, loginStatus);
     })();
@@ -106,146 +109,106 @@ export const AppMain = () => {
 
   // if moderated items are modified, save them
   React.useEffect(() => {
-    (async () => await ArticleControl.persistToStorage('moderation', moderationArticleContext.itemList));
+    async () =>
+      await ArticleControl.persistToStorage(
+        'moderation',
+        moderationArticleContext.itemList,
+      );
   }, [moderationArticleContext.itemList]);
 
-  return (
-    <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
-      <BackButton />
-      <View style={styles.nav}>
-        <Link
-          to="/articles"
-          underlayColor="#f0f4f7"
-          style={styles.navItem}
-          replace={true}
-        >
-          <Text
-            style={
-              history.location.pathname === '/articles'
-                ? { textDecorationLine: 'underline' }
-                : {}
-            }
-          >
-            Public Feed
-          </Text>
-        </Link>
-        <Link
-          to="/moderation"
-          underlayColor="#f0f4f7"
-          style={styles.navItem}
-          replace={true}
-        >
-          <Text
-            style={
-              history.location.pathname === '/moderation'
-                ? { textDecorationLine: 'underline' }
-                : {}
-            }
-          >
-            Queue
-          </Text>
-        </Link>
-        {loginStatus.accessToken && (
-          <LoginContext.Consumer>
-            {({ setLoginStatus }) => (
-              <Button
-                title="Logout"
-                onPress={() => setLoginStatus({ username: '' } as LoginState)}
-              />
-            )}
-          </LoginContext.Consumer>
-        )}
-      </View>
+  const Stack = createStackNavigator();
 
+  const HomeScreen = () => (
+    <View
+      style={{
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Image source={require('./assets/onlydognews-logo-main.png')} />
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}
+        >
+          <Link to="/Articles">
+            <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
+              Check Articles
+            </Text>
+          </Link>
+          <Link to="/Moderation">
+            <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
+              Access Moderation
+            </Text>
+          </Link>
+        </View>
+      </View>
+    </View>
+  );
+
+  const ModerationScreen = ({ navigation }) => {
+    return loginStatus.accessToken ? (
+      <ArticleContext.Provider value={moderationArticleContext}>
+        <ArticleList />
+      </ArticleContext.Provider>
+    ) : (
       <View
         style={{
           flex: 1,
           flexDirection: 'column',
-          justifyContent: 'center',
-          backgroundColor: '#f0f0f0',
+          justifyContent: 'space-around',
+          alignItems: 'center',
         }}
       >
-        <Switch>
-          <Route
-            path="/"
-            exact
-            render={() => (
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Image source={require('./assets/onlydognews-logo-main.png')} />
-              </View>
-            )}
-          />
-
-          <Route exact path="/help/okta">
-            <View>
-              <Text style={{ padding: 25, fontWeight: 'bold', fontSize: 24 }}>
-                What is Okta?
-              </Text>
-              <Text style={{ paddingLeft: 50, paddingRight: 50 }}>
-                You can register and login using third party providers of user
-                management. Okta is one of them.
-              </Text>
-              <Text
-                style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
-              >
-                A third party Identity Provider store your personal details and
-                helps us to ensure your data is protected.
-              </Text>
-              <Text
-                style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}
-              >
-                You can use Okta as an identity provider in various
-                applications, the same way you can register using Google or
-                Facebook.
-              </Text>
-              <Text
-                onPress={() => history.goBack()}
-                style={{
-                  textDecorationLine: 'underline',
-                  paddingTop: 30,
-                  textAlign: 'center',
-                }}
-              >
-                Go Back
-              </Text>
-            </View>
-          </Route>
-
-          <Route
-            exact
-            path="/moderation"
-            render={() =>
-              !!loginStatus.accessToken ? (
-                <ArticleContext.Provider value={moderationArticleContext}>
-                  <ArticleList />
-                </ArticleContext.Provider>
-              ) : (
-                <Redirect to="/login/home/moderation" />
-              )
-            }
-          />
-
-          <Route
-            exact
-            path="/articles"
-            render={() => (
-              <ArticleContext.Provider value={latestNewsArticleContext}>
-                <ArticleList />
-              </ArticleContext.Provider>
-            )}
-          />
-          <Route path="/login/:provider/:from" component={LoginHome} />
-          <Route path="/login/:provider" component={LoginHome} />
-          <Route component={NoMatch} />
-        </Switch>
+        <Text style={{ fontWeight: 'bold', fontSize: 24 }}>
+          Moderation of Articles
+        </Text>
+        <Text style={{ padding: 20 }}>
+          The moderation queue is only available to registered users with
+          moderation access
+        </Text>
+        <Link to="/Login">
+          <Text style={{ textDecorationLine: 'underline' }}>Please Login</Text>
+        </Link>
+        <Text
+          onPress={() => navigation.goBack()}
+          style={{
+            textDecorationLine: 'underline',
+            paddingTop: 30,
+            textAlign: 'center',
+          }}
+        >
+          Go Back
+        </Text>
       </View>
+    );
+  };
+
+  const ArticleScreen = () => (
+    <ArticleContext.Provider value={latestNewsArticleContext}>
+      <ArticleList />
+    </ArticleContext.Provider>
+  );
+
+  return (
+    <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Articles" component={ArticleScreen} />
+            <Stack.Screen name="Moderation" component={ModerationScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </Stack.Navigator>
     </LoginContext.Provider>
   );
 };

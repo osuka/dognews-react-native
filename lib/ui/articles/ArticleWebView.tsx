@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { WebView } from 'react-native-webview';
-import { View, Text, Button } from 'react-native';
+import { View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { NavigationStackScreenProps } from 'react-navigation-stack';
 
 import { Palette } from '../Palette';
 import { Item } from '../../models/items';
-import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleControl';
+import { ArticleContext, ArticleControl } from './ArticleControl';
 
 // This uses
 //
@@ -15,17 +14,14 @@ import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleCon
 // Note that it needs to be linked (npx react-native link react-native-webview)
 // so that the native part is added to the iOS and Android projects
 
-export function ArticleWebView(props: NavigationStackScreenProps) {
+export function ArticleWebView({route, navigation}) {
   let webView: WebView;
   const [loading, setLoading] = React.useState(false);
   const articleContext = React.useContext(ArticleContext);
-  const itemId: string = props.navigation.getParam('itemId');
+  const { itemId, title } = route.params;
   const item: Item = ArticleControl.findItem(articleContext, itemId);
 
   const newTitle = item?.title || 'No article title';
-  if (props.navigation.getParam('title') !== newTitle) {
-    props.navigation.setParams({ title: newTitle });
-  }
 
   const rating = ArticleControl.getItemUserRating(articleContext, item);
 
@@ -53,7 +49,7 @@ export function ArticleWebView(props: NavigationStackScreenProps) {
             solid={false}
             color={Palette.mainForeground}
             backgroundColor="transparent"
-            onPress={() => props.navigation.goBack()}
+            onPress={() => navigation.goBack()}
           />
           <Icon.Button
             key='forward'
@@ -95,7 +91,7 @@ export function ArticleWebView(props: NavigationStackScreenProps) {
                 rating ? Palette.warningForeground : Palette.mainForeground
               }
               backgroundColor="transparent"
-              onPress={() => props.navigation.goBack()}
+              onPress={() => navigation.goBack()}
             />
           )}
         </View>
@@ -130,7 +126,7 @@ export function ArticleWebView(props: NavigationStackScreenProps) {
                 ArticleControl.rateItem(articleContext, item, -1);
               }
 
-              props.navigation.goBack();
+              navigation.goBack();
             }}
           ></Icon.Button>
         </View>

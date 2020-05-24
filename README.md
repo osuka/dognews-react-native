@@ -62,6 +62,10 @@ npm run fontawesome
 The installation in Linux is as follows:
 
 ```sh
+# ubuntu 20.04+
+sudo apt install -y watchman
+
+# other distros if they lack watchman
 git clone https://github.com/facebook/watchman.git
 cd watchman
 git checkout v4.9.0  # or wahtever the latest stable release

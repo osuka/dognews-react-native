@@ -1,11 +1,8 @@
 import React, { useContext } from 'react';
 import { FlatList, View, Text, RefreshControl } from 'react-native';
-import { createAppContainer } from 'react-navigation';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  createStackNavigator,
-  NavigationStackScreenProps,
-} from 'react-navigation-stack';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import { Item } from '../../models/items';
@@ -24,7 +21,7 @@ const ItemSeparator = () => {
   );
 };
 
-function ArticleListScreen(props: NavigationStackScreenProps) {
+function ArticleListScreen({ navigation }) {
   const loginContext = useContext<LoginContextType>(LoginContext);
   const articleContext = useContext<ArticleContextType>(ArticleContext);
 
@@ -60,7 +57,7 @@ function ArticleListScreen(props: NavigationStackScreenProps) {
                 positionInList={index}
                 totalItems={ctx.itemList.length}
                 onArticleClick={() =>
-                  props.navigation.navigate('ArticleDetail', {
+                  navigation.push("ArticleDetail", {
                     itemId: item.id,
                     title: item.title,
                   })
@@ -80,16 +77,11 @@ ArticleListScreen.navigationOptions = {
   title: 'Dog News Viewer',
 };
 
-export const ArticleListNavigator = createStackNavigator(
-  {
-    Test: { screen: () => <Text>Hey</Text> },
-    Home: { screen: ArticleListScreen },
-    ArticleDetail: { screen: ArticleWebView },
-  },
-  {
-    headerMode: 'none',
-    initialRouteName: 'Home',
-  },
-);
+const Stack = createStackNavigator();
 
-export const ArticleList = createAppContainer(ArticleListNavigator);
+export const ArticleList = () => (
+  <Stack.Navigator initialRouteName="Home" headerMode="none">
+    <Stack.Screen name="Home" component={ArticleListScreen} />
+    <Stack.Screen name="ArticleDetail" component={ArticleWebView} />
+  </Stack.Navigator>
+);
