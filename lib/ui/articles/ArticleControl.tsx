@@ -12,6 +12,7 @@ const USER = 'osuka'; // TODO: retrieve user name from Login State
 //
 
 export type ArticleContextType = {
+  needsLoading: boolean; // use to trigger loading
   itemList: Array<Item>;
   setItemList: (items: Array<Item>) => void;
   fetchingStatus: boolean;
