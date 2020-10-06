@@ -3,15 +3,16 @@
 import {StyleSheet} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
-// maps route with parameters to be received
-export type RootNavigatorParameters = {
-  Home: undefined;
-  Moderation: undefined;
-  Articles: undefined;
-  Login: undefined;
-};
-
 export const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+
+  card: {},
+
+  // previous styles
   homeContainer: {
     flex: 1,
     flexDirection: 'column',

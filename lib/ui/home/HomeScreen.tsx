@@ -1,7 +1,7 @@
 import React from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
 
-import {RootNavigatorParameters, styles} from '../Root';
+import {styles} from '../Root';
 import ReactNative from 'react-native';
 import {Link} from '@react-navigation/native';
 
@@ -9,19 +9,7 @@ import {Link} from '@react-navigation/native';
 // TODO: importing images from typescript gets a bit bonkers, better way?
 const logo = require('../../../assets/onlydognews-logo-main.png');
 
-// parameters that this screen can accept are declared here as an extension from
-// from the root navigation parameters for the 'Home' case
-type HomeScreenNavigationProps = StackNavigationProp<
-  RootNavigatorParameters,
-  'Home'
->;
-
-export default function HomeScreen({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  navigation,
-}: {
-  navigation: HomeScreenNavigationProps;
-}): React.ReactElement {
+export default function HomeScreen(): React.ReactElement {
   return (
     <ReactNative.View style={styles.homeContainer}>
       <ReactNative.Image source={logo} />

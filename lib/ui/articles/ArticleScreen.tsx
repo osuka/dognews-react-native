@@ -1,7 +1,4 @@
 import React from 'react';
-import {StackNavigationProp} from '@react-navigation/stack';
-
-import {RootNavigatorParameters} from '../Root';
 
 import {
   ArticleContext,
@@ -13,17 +10,7 @@ import {ArticleList} from '../articles/ArticleList';
 import {Item} from '../../models/items';
 import {LoginContext} from '../auth/Login';
 
-type ArticleScreenNavigationProps = StackNavigationProp<
-  RootNavigatorParameters,
-  'Articles'
->;
-
-export default function ArticleScreen({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  navigation,
-}: {
-  navigation: ArticleScreenNavigationProps;
-}): React.ReactElement {
+export default function ArticleScreen(): React.ReactElement {
   const [feedFetchingStatus, feedSetFetchingStatus] = React.useState<boolean>(
     false,
   );

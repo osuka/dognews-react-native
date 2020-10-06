@@ -4,6 +4,23 @@
 
 ---
 
+## 2020-10-04 Generate a client from an openapi specification
+
+Our django backend utilizes an app that exports a swagger view and swagger provides a converter to openapi.
+
+```sh
+curl -o openapi.spec https://dognewsserver.gatillos.com/swagger/?format=openapi
+npx openapi-typescript-codegen \
+  -i openapi.spec \
+  -o lib/generated/dognewsserverclient \
+  -c fetch \
+  --useUnionTypes
+```
+
+This is based on [openapi-typescript-codegen](https://github.com/ferdikoomen/openapi-typescript-codegen). This project will generate a whole structure of services and models supporting my API, with type definitions for all requests and reponses which I find very handy. The generated code is pretty cleand and straightforward, so could be used just as a starting point if one doesn't want to use the tool again to recreate it after updates, of it the project stops being maintained etc.
+
+---
+
 ## 2020-10-01 Project recreation
 
 The previous version was based on a standard react native templated manually migrated to typescript. We want to use the new react typescript template when moving to react-native 0.63.

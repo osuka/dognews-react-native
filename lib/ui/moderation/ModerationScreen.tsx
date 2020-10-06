@@ -1,10 +1,8 @@
 import React from 'react';
-import {StackNavigationProp} from '@react-navigation/stack';
 
-import {RootNavigatorParameters, styles} from '../Root';
 import ReactNative from 'react-native';
 import {Link} from '@react-navigation/native';
-
+import {useNavigation} from '@react-navigation/native';
 import {
   ArticleContext,
   ArticleContextType,
@@ -13,17 +11,9 @@ import {
 import {Item} from '../../models/items';
 import {ArticleList} from '../articles/ArticleList';
 import {LoginContext, LoginContextType} from '../auth/Login';
+import {styles} from '../Root';
 
-type ModerationScreenNavigationProp = StackNavigationProp<
-  RootNavigatorParameters,
-  'Moderation'
->;
-
-export default function ModerationScreen({
-  navigation,
-}: {
-  navigation: ModerationScreenNavigationProp;
-}): React.ReactElement {
+export default function ModerationScreen(): React.ReactElement {
   const [fetchingStatus, setFetchingStatus] = React.useState<boolean>(false);
   const [itemList, setItemList] = React.useState<Array<Item>>([]);
   // context that facilitate finding the state values
@@ -33,6 +23,7 @@ export default function ModerationScreen({
     itemList,
     setItemList,
     source: 'api',
+    needsLoading: false,
   };
 
   // if moderated items are modified, save them
@@ -45,6 +36,7 @@ export default function ModerationScreen({
   }, [moderationArticleContext.itemList]);
 
   const loginContext = React.useContext<LoginContextType>(LoginContext);
+  const navigation = useNavigation();
 
   return loginContext.loginStatus.accessToken ? (
     <ArticleContext.Provider value={moderationArticleContext}>

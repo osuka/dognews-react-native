@@ -1,19 +1,16 @@
-import React, {useContext} from 'react';
-import {FlatList, View, Text, RefreshControl} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
+import React, {useContext} from 'react';
+import {FlatList, RefreshControl, View} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
-
 import {Item} from '../../models/items';
+import {LoginContext, LoginContextType} from '../auth/Login';
+import {Article} from './Article';
 import {
-  ArticleContextType,
   ArticleContext,
+  ArticleContextType,
   ArticleControl,
 } from './ArticleControl';
-import {Article} from './Article';
 import {ArticleWebView} from './ArticleWebView';
-import {LoginContext, LoginContextType} from '../auth/Login';
 
 const ItemSeparator = () => {
   return (
@@ -36,7 +33,7 @@ function ArticleListScreen({navigation}) {
   return (
     <ArticleContext.Consumer>
       {(ctx) => (
-      <View>
+        <View>
           <Spinner
             visible={ctx.fetchingStatus}
             textContent={'Loading...'}
@@ -57,7 +54,7 @@ function ArticleListScreen({navigation}) {
                 positionInList={index}
                 totalItems={ctx.itemList.length}
                 onArticleClick={() =>
-                  navigation.push('ArticleDetail', {
+                  navigation.push('Article Detail', {
                     itemId: item.id,
                     title: item.title,
                   })
