@@ -1,15 +1,13 @@
-
 export async function login(url: string, username: string, password: string) {
-
-  const payload = { username, password }
+  const payload = { username, password };
 
   let options = {
     method: 'POST',
     headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8',
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   };
 
   let response = await fetch(`${url}/auth/login/`, options);
@@ -25,4 +23,4 @@ export async function login(url: string, username: string, password: string) {
     }
     throw Error(`Login failed\n${msg}`);
   }
-};
+}

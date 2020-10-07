@@ -8,24 +8,20 @@
  * @format
  */
 
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {
-  DrawerActions,
-  NavigationContainer,
-  useNavigation,
-} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { DrawerActions, NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import {Image, StyleSheet} from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {LoginState} from './lib/models/login';
+import { LoginState } from './lib/models/login';
 import {
   loadLoginFromStorage,
   LoginContext,
   LoginScreen,
   persistLoginStatus,
 } from './lib/ui/auth/Login';
-import {ArticleDetail} from './lib/ui/screens/articledetail';
+import { ArticleDetail } from './lib/ui/screens/articledetail';
 import ArticleListScreen from './lib/ui/screens/articlelist';
 import ModerationScreen from './lib/ui/moderation/ModerationScreen';
 
@@ -35,7 +31,7 @@ const logo = require('./assets/onlydognews-logo-main.png');
 
 // opt-in javascript engine optimized for react native
 // https://reactnative.dev/docs/hermes
-declare const global: {HermesInternal: null | {}}; // needed so TS doesn't complain
+declare const global: { HermesInternal: null | {} }; // needed so TS doesn't complain
 
 // import 'react-native-gesture-handler'
 
@@ -93,9 +89,7 @@ const HomeNavigatorScreen = () => {
 };
 
 export const App = () => {
-  const [loginStatus, setLoginStatus] = React.useState(
-    loadLoginFromStorage() as LoginState,
-  );
+  const [loginStatus, setLoginStatus] = React.useState(loadLoginFromStorage() as LoginState);
 
   // let history = useHistory();
   // applyBrowserLocationBlocker(history);
@@ -106,7 +100,7 @@ export const App = () => {
   }, [loginStatus]);
 
   return (
-    <LoginContext.Provider value={{loginStatus, setLoginStatus}}>
+    <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
       <NavigationContainer>
         <Drawer.Navigator initialRouteName="HomeNavigator" drawerType="slide">
           <Stack.Screen name="Home" component={HomeNavigatorScreen} />

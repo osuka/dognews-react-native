@@ -24,12 +24,12 @@ import {
   Platform,
 } from 'react-native';
 
-import {authorize, refresh, revoke} from 'react-native-app-auth'; // oauth2
-import {Link} from '@react-navigation/native';
+import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
+import { Link } from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import {login} from '../../services/directauth';
-import {LoginState} from '../../models/login';
+import { login } from '../../services/directauth';
+import { LoginState } from '../../models/login';
 import authConfig from '../../../auth.config';
 
 // ============ login storage (session and persistent)
@@ -39,11 +39,11 @@ export type LoginContextType = {
   setLoginStatus: (s: LoginState) => void;
 };
 export const LoginContext = React.createContext<LoginContextType>({
-  loginStatus: {username: ''},
+  loginStatus: { username: '' },
   setLoginStatus: () => {},
 });
 
-export async function loadLoginFromStorage():LoginState {
+export async function loadLoginFromStorage(): LoginState {
   try {
     const loginStatus = await AsyncStorage.getItem('@loginStatus');
     if (loginStatus !== null) {
@@ -70,13 +70,13 @@ export async function persistLoginStatus(loginStatus: LoginState) {
 
 // ============ we offer various types of login
 
-export const LoginScreen = ({navigation}) => {
+export const LoginScreen = ({ navigation }) => {
   // ============= direct login
 
   const DirectLogin = () => {
     return (
       <LoginContext.Consumer>
-        {({loginStatus, setLoginStatus}) => (
+        {({ loginStatus, setLoginStatus }) => (
           <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             style={{
@@ -92,28 +92,26 @@ export const LoginScreen = ({navigation}) => {
                   alignItems: 'center',
                 }}>
                 <Image
-                  style={{resizeMode: 'contain', height: '40%'}}
+                  style={{ resizeMode: 'contain', height: '40%' }}
                   source={require('../../../assets/onlydognews-logo-main.png')}
                 />
                 <TextInput
-                  style={{borderWidth: 1, width: '80%'}}
+                  style={{ borderWidth: 1, width: '80%' }}
                   placeholder="Login"
                   onChangeText={(text) => (loginStatus.username = text)}
                 />
                 <TextInput
-                  style={{borderWidth: 1, width: '80%'}}
+                  style={{ borderWidth: 1, width: '80%' }}
                   placeholder="Password"
                   secureTextEntry={true}
                   onChangeText={(text) => (loginStatus.password = text)}
                 />
-                {!!loginStatus.error && (
-                  <Text style={styles.error}>{loginStatus.error}</Text>
-                )}
-                <View style={{marginTop: 12}}>
+                {!!loginStatus.error && <Text style={styles.error}>{loginStatus.error}</Text>}
+                <View style={{ marginTop: 12 }}>
                   <Button
                     onPress={async () => {
                       loginStatus.progress = true;
-                      setLoginStatus({...loginStatus, progress: true});
+                      setLoginStatus({ ...loginStatus, progress: true });
                       try {
                         setLoginStatus({
                           ...loginStatus,
@@ -125,7 +123,7 @@ export const LoginScreen = ({navigation}) => {
                           loginStatus.username,
                           loginStatus.password,
                         );
-                        setLoginStatus({...loginStatus, accessToken: token});
+                        setLoginStatus({ ...loginStatus, accessToken: token });
                         navigation.goBack();
                       } catch (err) {
                         setLoginStatus({
@@ -148,22 +146,20 @@ export const LoginScreen = ({navigation}) => {
 
   // okta login
 
-  const OktaLoginHelp = ({navigation}) => (
+  const OktaLoginHelp = ({ navigation }) => (
     <View>
-      <Text style={{padding: 25, fontWeight: 'bold', fontSize: 24}}>
-        What is Okta?
+      <Text style={{ padding: 25, fontWeight: 'bold', fontSize: 24 }}>What is Okta?</Text>
+      <Text style={{ paddingLeft: 50, paddingRight: 50 }}>
+        You can register and login using third party providers of user management. Okta is one of
+        them.
       </Text>
-      <Text style={{paddingLeft: 50, paddingRight: 50}}>
-        You can register and login using third party providers of user
-        management. Okta is one of them.
+      <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
+        A third party Identity Provider store your personal details and helps us to ensure your data
+        is protected.
       </Text>
-      <Text style={{paddingLeft: 50, paddingRight: 50, paddingTop: 20}}>
-        A third party Identity Provider store your personal details and helps us
-        to ensure your data is protected.
-      </Text>
-      <Text style={{paddingLeft: 50, paddingRight: 50, paddingTop: 20}}>
-        You can use Okta as an identity provider in various applications, the
-        same way you can register using Google or Facebook.
+      <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
+        You can use Okta as an identity provider in various applications, the same way you can
+        register using Google or Facebook.
       </Text>
       <Text
         onPress={() => navigation.goBack()}
@@ -184,7 +180,7 @@ export const LoginScreen = ({navigation}) => {
     scopes: authConfig.oidc.scopes,
   };
 
-  const OktaLoginScreen = ({navigation}) => {
+  const OktaLoginScreen = ({ navigation }) => {
     const initiateAuthorize = async (
       loginStatus: LoginState,
       setLoginStatus: (s: LoginState) => void,
@@ -202,7 +198,7 @@ export const LoginScreen = ({navigation}) => {
       } catch (error) {
         // it will come back here in case of it not being able to load
         // or if the user closes the browser
-        setLoginStatus({username: loginStatus.username});
+        setLoginStatus({ username: loginStatus.username });
       }
     };
 
@@ -225,12 +221,11 @@ export const LoginScreen = ({navigation}) => {
           progress: false,
           accessToken: authState.accessToken || loginStatus.accessToken,
           accessTokenExpirationDate:
-            authState.accessTokenExpirationDate ||
-            loginStatus.accessTokenExpirationDate,
+            authState.accessTokenExpirationDate || loginStatus.accessTokenExpirationDate,
           refreshToken: authState.refreshToken || loginStatus.refreshToken,
         });
       } catch (error) {
-        setLoginStatus({username: loginStatus.username});
+        setLoginStatus({ username: loginStatus.username });
         console.error(error);
       }
     };
@@ -257,20 +252,17 @@ export const LoginScreen = ({navigation}) => {
           refreshToken: '',
         });
       } catch (error) {
-        setLoginStatus({username: loginStatus.username});
+        setLoginStatus({ username: loginStatus.username });
         console.error(error);
       }
     };
 
     return (
       <LoginContext.Consumer>
-        {({loginStatus, setLoginStatus}) => (
-          <View
-            style={{alignItems: 'center', flex: 1, flexDirection: 'column'}}>
-            <Image
-              source={require('../../../assets/onlydognews-logo-main.png')}
-            />
-            <View style={{marginTop: 16}}>
+        {({ loginStatus, setLoginStatus }) => (
+          <View style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }}>
+            <Image source={require('../../../assets/onlydognews-logo-main.png')} />
+            <View style={{ marginTop: 16 }}>
               <Button
                 onPress={() => initiateAuthorize(loginStatus, setLoginStatus)}
                 title="Login or register via Okta..."
@@ -283,18 +275,14 @@ export const LoginScreen = ({navigation}) => {
                 paddingRight: 30,
                 textAlign: 'center',
               }}>
-              You can help moderate and rank articles on Only Dog News by
-              registering as a user and requesting moderator access.
+              You can help moderate and rank articles on Only Dog News by registering as a user and
+              requesting moderator access.
             </Text>
-            <Link to="/OktaLoginHelp" style={{paddingTop: 16}}>
-              <Text style={{textDecorationLine: 'underline'}}>
-                What is okta?
-              </Text>
+            <Link to="/OktaLoginHelp" style={{ paddingTop: 16 }}>
+              <Text style={{ textDecorationLine: 'underline' }}>What is okta?</Text>
             </Link>
-            <Link to="/DirectLogin" style={{paddingTop: 16}}>
-              <Text style={{textDecorationLine: 'underline'}}>
-                Admin access
-              </Text>
+            <Link to="/DirectLogin" style={{ paddingTop: 16 }}>
+              <Text style={{ textDecorationLine: 'underline' }}>Admin access</Text>
             </Link>
           </View>
         )}
@@ -304,11 +292,8 @@ export const LoginScreen = ({navigation}) => {
 
   const Logout = () => (
     <LoginContext.Consumer>
-      {({setLoginStatus}) => (
-        <Button
-          title="Logout"
-          onPress={() => setLoginStatus({username: ''} as LoginState)}
-        />
+      {({ setLoginStatus }) => (
+        <Button title="Logout" onPress={() => setLoginStatus({ username: '' } as LoginState)} />
       )}
     </LoginContext.Consumer>
   );
@@ -316,8 +301,7 @@ export const LoginScreen = ({navigation}) => {
   return (
     <LoginContext.Consumer>
       {
-        ({loginStatus}) =>
-          !!loginStatus.accessToken ? <Logout /> : <DirectLogin />
+        ({ loginStatus }) => (!!loginStatus.accessToken ? <Logout /> : <DirectLogin />)
         // <Stack.Screen name="OktaLogin" component={OktaLoginScreen} />
         // <Stack.Screen
         //   name="DirectLogin"

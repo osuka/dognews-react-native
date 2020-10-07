@@ -1,17 +1,17 @@
-import { View, Text } from 'react-native'
-import Icon from 'react-native-vector-icons/FontAwesome5'
-import { Palette } from './Palette'
-import * as React from 'react'
+import { View, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Palette } from './Palette';
+import * as React from 'react';
 
 type RatingProps = {
-  rating: number
-  onPress: () => void
-}
+  rating: number;
+  onPress: () => void;
+};
 
 export const Rating = (props: RatingProps) => {
-  const { rating, onPress } = props
-  const isBadRating = rating < 0
-  const isExcellent = rating > 1
+  const { rating, onPress } = props;
+  const isBadRating = rating < 0;
+  const isExcellent = rating > 1;
 
   return React.useMemo(
     () => (
@@ -29,5 +29,5 @@ export const Rating = (props: RatingProps) => {
       </View>
     ),
     [rating, onPress],
-  )
-}
+  );
+};

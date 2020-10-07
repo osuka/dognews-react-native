@@ -1,12 +1,12 @@
 // https://reactnavigation.org/docs/typescript/
 
-import {StyleSheet} from 'react-native';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {Article} from '../generated/dognewsserverclient';
+import { StyleSheet } from 'react-native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { Article } from '../generated/dognewsserverclient';
 
 export type RootStackParamList = {
   ArticleList: undefined;
-  ArticleDetail: {article: Article};
+  ArticleDetail: { article: Article };
 };
 
 export const styles = StyleSheet.create({

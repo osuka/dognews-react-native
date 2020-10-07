@@ -1,19 +1,13 @@
 import React from 'react';
 
-import {
-  ArticleContext,
-  ArticleContextType,
-  ArticleControl,
-} from '../articles/ArticleControl';
+import { ArticleContext, ArticleContextType, ArticleControl } from '../articles/ArticleControl';
 
-import {ArticleList} from '../articles/ArticleList';
-import {Item} from '../../models/items';
-import {LoginContext} from '../auth/Login';
+import { ArticleList } from '../articles/ArticleList';
+import { Item } from '../../models/items';
+import { LoginContext } from '../auth/Login';
 
 export default function ArticleScreen(): React.ReactElement {
-  const [feedFetchingStatus, feedSetFetchingStatus] = React.useState<boolean>(
-    false,
-  );
+  const [feedFetchingStatus, feedSetFetchingStatus] = React.useState<boolean>(false);
   const [needsLoading, setNeedsLoading] = React.useState<boolean>(
     true, // starts fetching
   );
@@ -35,10 +29,7 @@ export default function ArticleScreen(): React.ReactElement {
   React.useEffect(() => {
     if (needsLoading) {
       setNeedsLoading(false);
-      ArticleControl.fetchNews(
-        latestNewsArticleContext,
-        loginContext.loginStatus,
-      );
+      ArticleControl.fetchNews(latestNewsArticleContext, loginContext.loginStatus);
     }
   }, [needsLoading, latestNewsArticleContext, loginContext.loginStatus]);
 

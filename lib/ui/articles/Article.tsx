@@ -10,21 +10,17 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import {fromString} from 'html-to-text';
+import { fromString } from 'html-to-text';
 
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import {Palette} from '../Palette';
-import {Rating} from '../Rating';
-import {
-  ArticleContext,
-  ArticleContextType,
-  ArticleControl,
-} from './ArticleControl';
-import {Item, NewsItemRating} from '../../models/items';
-import {extractDomain} from '../../services/extractDomain';
+import { Palette } from '../Palette';
+import { Rating } from '../Rating';
+import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleControl';
+import { Item, NewsItemRating } from '../../models/items';
+import { extractDomain } from '../../services/extractDomain';
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -55,15 +51,10 @@ export function Article({
     setCollapsed(!collapsed);
   };
 
-  const layoutAnimationDisappear = LayoutAnimation.create(
-    60,
-    'easeOut',
-    'opacity',
-  );
+  const layoutAnimationDisappear = LayoutAnimation.create(60, 'easeOut', 'opacity');
 
   const toggleRemoved = () => {
-    const currentUserRemovedIt =
-      ArticleControl.getItemUserRating(articleContext, item) < 0;
+    const currentUserRemovedIt = ArticleControl.getItemUserRating(articleContext, item) < 0;
     if (currentUserRemovedIt) {
       ArticleControl.rateItem(articleContext, item, 0);
     } else {
@@ -81,7 +72,7 @@ export function Article({
 
   const rating = ArticleControl.getItemUserRating(articleContext, item);
 
-  const {width, height} = Dimensions.get('window');
+  const { width, height } = Dimensions.get('window');
   const IMAGE_SMALL_WIDTH = width * 0.14;
   const IMAGE_WIDTH = width * 0.82;
 
@@ -92,8 +83,7 @@ export function Article({
 
   const scale = (size: number) => (width / guidelineBaseWidth) * size;
   // const verticalScale = (size: number) => height / guidelineBaseHeight * size;
-  const moderateScale = (size: number, factor = 0.5) =>
-    size + (scale(size) - size) * factor;
+  const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
 
   const normalFontSize = 14;
   const smallFontSize = moderateScale(normalFontSize, -0.6);
@@ -103,7 +93,7 @@ export function Article({
       key={item.id || item.url}
       delayPressIn={0}
       delayPressOut={0}
-      style={{backgroundColor: Palette.mainBackground}}
+      style={{ backgroundColor: Palette.mainBackground }}
       onPress={toggleCollapsed}>
       <View
         style={{
@@ -111,10 +101,9 @@ export function Article({
           padding: 2,
           backgroundColor: '#fffdf6',
         }}>
-        <View style={{flexDirection: 'row', padding: 2}}>
+        <View style={{ flexDirection: 'row', padding: 2 }}>
           {rating >= 0 && item.thumbnail && (
-            <TouchableOpacity
-              onPress={() => item.image && Linking.openURL(item.image)}>
+            <TouchableOpacity onPress={() => item.image && Linking.openURL(item.image)}>
               <Image
                 style={{
                   width: IMAGE_SMALL_WIDTH,
@@ -123,18 +112,14 @@ export function Article({
                 source={{
                   uri: item.thumbnail?.startsWith('http')
                     ? item.thumbnail
-                    : 'https://gatillos.com/onlydognews-assets/' +
-                      item.thumbnail,
+                    : 'https://gatillos.com/onlydognews-assets/' + item.thumbnail,
                 }}
               />
             </TouchableOpacity>
           )}
           <Text
             style={{
-              color:
-                rating < 0
-                  ? Palette.disabledForeground
-                  : Palette.headingForeground,
+              color: rating < 0 ? Palette.disabledForeground : Palette.headingForeground,
               padding: 6,
               flex: 1,
               fontSize: rating < 0 ? smallFontSize : normalFontSize,
@@ -147,29 +132,24 @@ export function Article({
               fontSize: rating < 0 ? smallFontSize : normalFontSize,
             }}
             name={rating < 0 ? 'poo' : 'trash'}
-            color={
-              rating < 0
-                ? Palette.disabledForeground
-                : Palette.headingForeground
-            }
+            color={rating < 0 ? Palette.disabledForeground : Palette.headingForeground}
             backgroundColor="transparent"
             onPress={toggleRemoved}
           />
         </View>
 
         {rating >= 0 && (
-          <View style={{flexDirection: 'row', padding: 2}}>
+          <View style={{ flexDirection: 'row', padding: 2 }}>
             {!collapsed && (
-              <View style={{flexDirection: 'column', padding: 4}}>
+              <View style={{ flexDirection: 'column', padding: 4 }}>
                 {item.thumbnail && (
-                  <View style={{flex: 1}}>
+                  <View style={{ flex: 1 }}>
                     <Image
-                      style={{width: IMAGE_WIDTH, height: IMAGE_WIDTH}}
+                      style={{ width: IMAGE_WIDTH, height: IMAGE_WIDTH }}
                       source={{
                         uri: item.thumbnail?.startsWith('http')
                           ? item.thumbnail
-                          : 'https://gatillos.com/onlydognews-assets/' +
-                            item.thumbnail,
+                          : 'https://gatillos.com/onlydognews-assets/' + item.thumbnail,
                       }}
                     />
                   </View>
@@ -184,12 +164,7 @@ export function Article({
                       padding: 6,
                       color: Palette.mainForeground,
                     }}>
-                    {fromString(
-                      item.summary ||
-                        item.description ||
-                        item.body ||
-                        'No summary',
-                    )}
+                    {fromString(item.summary || item.description || item.body || 'No summary')}
                   </Text>
                 </View>
               </View>
@@ -198,8 +173,8 @@ export function Article({
         )}
 
         {rating >= 0 && (
-          <View style={{flexDirection: 'row', padding: 2}}>
-            <TouchableOpacity style={{flex: 1}} onPress={onArticleClick}>
+          <View style={{ flexDirection: 'row', padding: 2 }}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={onArticleClick}>
               <Text
                 style={{
                   color: Palette.mainForeground,
@@ -207,16 +182,13 @@ export function Article({
                   textAlignVertical: 'bottom',
                 }}>
                 {positionText}
-                <Text style={{fontSize: 12}}>
+                <Text style={{ fontSize: 12 }}>
                   {'\n'}
                   {domain}
                 </Text>
               </Text>
             </TouchableOpacity>
-            <Rating
-              rating={rating}
-              onPress={() => ArticleControl.rateItem(articleContext, item)}
-            />
+            <Rating rating={rating} onPress={() => ArticleControl.rateItem(articleContext, item)} />
           </View>
         )}
       </View>

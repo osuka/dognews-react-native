@@ -1,7 +1,7 @@
 // import authConfig from '../../auth.config';
-import {LoginState} from '../models/login';
-import {Item} from '../models/items';
-import {ArticlesService} from '../generated/dognewsserverclient';
+import { LoginState } from '../models/login';
+import { Item } from '../models/items';
+import { ArticlesService } from '../generated/dognewsserverclient';
 
 export const ItemService = {
   async getAll(loginStatus: LoginState) {
@@ -23,9 +23,7 @@ export const ItemService = {
       const art = articles[index];
       items.push({
         id: art.url || 'missing_id',
-        url:
-          art.target_url ||
-          'https://onlydognews.com/gfx/site/onlydognews-logo-main.png',
+        url: art.target_url || 'https://onlydognews.com/gfx/site/onlydognews-logo-main.png',
         title: art.title || 'Untitled',
         description: art.description,
         body: '',

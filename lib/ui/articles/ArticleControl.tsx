@@ -49,9 +49,7 @@ export const ArticleControl = {
         return;
       }
 
-      const filteredNews = responseJson.filter(
-        (item: Item) => item.sentiment !== 'bad',
-      );
+      const filteredNews = responseJson.filter((item: Item) => item.sentiment !== 'bad');
 
       // there are some differences between the feed and the API
       // the api returns 'url' as the URL of the item inside the API, ie http://10.0.2.2:8000/newsItem/4
@@ -64,9 +62,7 @@ export const ArticleControl = {
       }
 
       // merge/add items
-      const existingIds: Array<string> = ctx.itemList.map(
-        (item: Item) => item.id,
-      );
+      const existingIds: Array<string> = ctx.itemList.map((item: Item) => item.id);
 
       const newList = filteredNews
         .filter((item: Item) => !existingIds.find((id) => item.id === id))
@@ -94,9 +90,7 @@ export const ArticleControl = {
     item.ratings = item.ratings || {};
     item.ratings[USER] = {
       rating:
-        typeof value === 'number'
-          ? value
-          : (ArticleControl.getItemUserRating(ctx, item) + 1) % 6,
+        typeof value === 'number' ? value : (ArticleControl.getItemUserRating(ctx, item) + 1) % 6,
       date: new Date().toUTCString(),
     };
     // force reload
@@ -104,9 +98,7 @@ export const ArticleControl = {
   },
 
   removeItem(ctx: ArticleContextType, item: Item) {
-    ctx.setItemList(
-      [].concat(ctx.itemList.filter((value) => value.id !== item.id)),
-    );
+    ctx.setItemList([].concat(ctx.itemList.filter((value) => value.id !== item.id)));
   },
 
   async restoreFromStorage(prefix: string, ctx: ArticleContextType) {
@@ -152,9 +144,7 @@ export const ArticleControl = {
       const responseJson = await response.json(); // reads the body in full here
 
       // merge/add items
-      const existingIds: Array<string> = ctx.itemList.map(
-        (item: Item) => item.id,
-      );
+      const existingIds: Array<string> = ctx.itemList.map((item: Item) => item.id);
 
       const newList = responseJson
         .filter((item: Item) => !existingIds.find((id) => item.id === id))
@@ -175,6 +165,4 @@ export const ArticleControl = {
 
 //
 
-export const ArticleContext = React.createContext<ArticleContextType>(
-  undefined,
-);
+export const ArticleContext = React.createContext<ArticleContextType>(undefined);
