@@ -56,7 +56,7 @@ const HomeNavigatorScreen = () => {
     <Icon.Button
       name="bars"
       color="black"
-      backgroundColor="transparent"
+      backgroundColor="white"
       onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
     />
   );
@@ -73,7 +73,9 @@ const HomeNavigatorScreen = () => {
         component={ArticleListScreen}
         options={{
           ...screenDefaults,
-          title: !global?.HermesInternal ? 'Dog News' : 'Dog News *hermes',
+          headerTransparent: true,
+          headerRight: undefined,
+          title: '',
         }}
       />
       <Stack.Screen
@@ -81,7 +83,8 @@ const HomeNavigatorScreen = () => {
         component={ArticleDetail}
         options={{
           ...screenDefaults,
-          title: 'News Article',
+          headerTransparent: true,
+          title: '',
         }}
       />
     </Stack.Navigator>
@@ -103,7 +106,7 @@ export const App = () => {
     <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
       <NavigationContainer>
         <Drawer.Navigator initialRouteName="HomeNavigator" drawerType="slide">
-          <Stack.Screen name="Home" component={HomeNavigatorScreen} />
+          <Stack.Screen name="News" component={HomeNavigatorScreen} />
           <Stack.Screen name="Collaborate" component={ModerationScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
         </Drawer.Navigator>
