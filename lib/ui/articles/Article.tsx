@@ -10,33 +10,25 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { fromString } from 'html-to-text';
+import {fromString} from 'html-to-text';
 
 // note: this needed `cp node_modules/react-native-vector-icons/Fonts/FontAwesome*.ttf android/app/src/main/assets/fonts/`
 // and rm -rf android/app/build
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import { Palette } from '../Palette';
-import { Rating } from '../Rating';
+import {Palette} from '../Palette';
+import {Rating} from '../Rating';
 import {
   ArticleContext,
   ArticleContextType,
   ArticleControl,
 } from './ArticleControl';
-import { Item, NewsItemRating } from '../../models/items';
+import {Item, NewsItemRating} from '../../models/items';
+import {extractDomain} from '../../services/extractDomain';
 
 // Layout animation is disabled by default
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
-
-const extractDomain = (url: string) => {
-  const regex = /.*\/\/([^/]*).*/;
-  const matches = regex.exec(url);
-  if (!matches || matches.length <= 1) {
-    return url;
-  }
-  return matches[1];
-};
 
 export const NewsItem_Height = 60;
 
@@ -89,7 +81,7 @@ export function Article({
 
   const rating = ArticleControl.getItemUserRating(articleContext, item);
 
-  const { width, height } = Dimensions.get('window');
+  const {width, height} = Dimensions.get('window');
   const IMAGE_SMALL_WIDTH = width * 0.14;
   const IMAGE_WIDTH = width * 0.82;
 
@@ -111,21 +103,18 @@ export function Article({
       key={item.id || item.url}
       delayPressIn={0}
       delayPressOut={0}
-      style={{ backgroundColor: Palette.mainBackground }}
-      onPress={toggleCollapsed}
-    >
+      style={{backgroundColor: Palette.mainBackground}}
+      onPress={toggleCollapsed}>
       <View
         style={{
           flexDirection: 'column',
           padding: 2,
           backgroundColor: '#fffdf6',
-        }}
-      >
-        <View style={{ flexDirection: 'row', padding: 2 }}>
+        }}>
+        <View style={{flexDirection: 'row', padding: 2}}>
           {rating >= 0 && item.thumbnail && (
             <TouchableOpacity
-              onPress={() => item.image && Linking.openURL(item.image)}
-            >
+              onPress={() => item.image && Linking.openURL(item.image)}>
               <Image
                 style={{
                   width: IMAGE_SMALL_WIDTH,
@@ -149,8 +138,7 @@ export function Article({
               padding: 6,
               flex: 1,
               fontSize: rating < 0 ? smallFontSize : normalFontSize,
-            }}
-          >
+            }}>
             {item.title}
           </Text>
           <Icon.Button
@@ -170,13 +158,13 @@ export function Article({
         </View>
 
         {rating >= 0 && (
-          <View style={{ flexDirection: 'row', padding: 2 }}>
+          <View style={{flexDirection: 'row', padding: 2}}>
             {!collapsed && (
-              <View style={{ flexDirection: 'column', padding: 4 }}>
+              <View style={{flexDirection: 'column', padding: 4}}>
                 {item.thumbnail && (
-                  <View style={{ flex: 1 }}>
+                  <View style={{flex: 1}}>
                     <Image
-                      style={{ width: IMAGE_WIDTH, height: IMAGE_WIDTH }}
+                      style={{width: IMAGE_WIDTH, height: IMAGE_WIDTH}}
                       source={{
                         uri: item.thumbnail?.startsWith('http')
                           ? item.thumbnail
@@ -189,20 +177,20 @@ export function Article({
                 <View
                   style={{
                     padding: 6,
-                  }}
-                >
+                  }}>
                   <Text
                     style={{
                       textAlign: 'left',
                       padding: 6,
                       color: Palette.mainForeground,
-                    }}
-                  >{fromString(
-                    item.summary ||
-                    item.description ||
-                    item.body ||
-                    'No summary'
-                  )}</Text>
+                    }}>
+                    {fromString(
+                      item.summary ||
+                        item.description ||
+                        item.body ||
+                        'No summary',
+                    )}
+                  </Text>
                 </View>
               </View>
             )}
@@ -210,17 +198,16 @@ export function Article({
         )}
 
         {rating >= 0 && (
-          <View style={{ flexDirection: 'row', padding: 2 }}>
-            <TouchableOpacity style={{ flex: 1 }} onPress={onArticleClick}>
+          <View style={{flexDirection: 'row', padding: 2}}>
+            <TouchableOpacity style={{flex: 1}} onPress={onArticleClick}>
               <Text
                 style={{
                   color: Palette.mainForeground,
                   padding: 6,
                   textAlignVertical: 'bottom',
-                }}
-              >
+                }}>
                 {positionText}
-                <Text style={{ fontSize: 12 }}>
+                <Text style={{fontSize: 12}}>
                   {'\n'}
                   {domain}
                 </Text>

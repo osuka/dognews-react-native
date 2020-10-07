@@ -73,11 +73,21 @@ const HomeNavigatorScreen = () => {
   return (
     <Stack.Navigator initialRouteName="ArticleList">
       <Stack.Screen
-        name={!global?.HermesInternal ? 'Dog News' : 'Dog News *hermes'}
+        name="ArticleList"
         component={ArticleListScreen}
-        options={screenDefaults}
+        options={{
+          ...screenDefaults,
+          title: !global?.HermesInternal ? 'Dog News' : 'Dog News *hermes',
+        }}
       />
-      <Stack.Screen name="News Article" component={ArticleDetail} />
+      <Stack.Screen
+        name="ArticleDetail"
+        component={ArticleDetail}
+        options={{
+          ...screenDefaults,
+          title: 'News Article',
+        }}
+      />
     </Stack.Navigator>
   );
 };

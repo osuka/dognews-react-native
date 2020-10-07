@@ -1,75 +1,70 @@
+import { RouteProp } from '@react-navigation/core';
+import { StackNavigationProp } from '@react-navigation/stack';
 import * as React from 'react';
-import {WebView} from 'react-native-webview';
-import {View, Text} from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { WebView } from 'react-native-webview';
+import { Palette } from '../Palette';
+import { RootStackParamList } from '../Root';
 
-import {Palette} from '../Palette';
-
-// This uses
-//
+// Check the (many) notes at
 // https://github.com/react-native-community/react-native-webview
 //
-// Note that it needs to be linked (npx react-native link react-native-webview)
-// so that the native part is added to the iOS and Android projects
 
-export function ArticleDetail({route, navigation}) {
-  let webView: WebView;
+// Type validation for screens: https://reactnavigation.org/docs/typescript#type-checking-screens
+type RoutePropType = RouteProp<RootStackParamList, 'ArticleDetail'>;
+
+type NavigationPropType = StackNavigationProp<RootStackParamList, 'ArticleDetail'>;
+
+type Props = {
+  route: RoutePropType;
+  navigation: NavigationPropType;
+};
+
+const styles = StyleSheet.create({
+  mainContainer: { flexDirection: 'column', flex: 1 },
+  webview: {},
+  buttonRow: { alignItems: 'flex-start', flexDirection: 'row' },
+  icons: { marginRight: 0 },
+});
+
+export function ArticleDetail({ route, navigation }: Props) {
+  let webView: WebView | null;
   const [loading, setLoading] = React.useState(false);
-  const {article} = route.params;
+  const { article } = route.params;
+  const iconActions = [
+    { icon: 'arrow-left', run: () => navigation.goBack() },
+    { icon: 'arrow-right', run: () => webView && webView.goForward() },
+    { icon: 'sync', run: () => webView && webView.reload() },
+  ];
 
   return (
-    <View style={{flexDirection: 'column', flex: 1}}>
-      <Text>{article?.title || 'Untitled'}</Text>
+    <View style={styles.mainContainer}>
       <WebView
         ref={(ref) => (webView = ref)}
         source={
-          (article?.target_url && {uri: article.target_url}) || {
+          (article?.target_url && { uri: article.target_url }) || {
             html: '<h1>No item selected</h1>',
           }
         }
         incognito={true}
-        style={{marginTop: 20}}
+        style={styles.webview}
         onLoadEnd={() => setLoading(false)}
         onLoadStart={() => setLoading(true)}
       />
-      <View style={{flexDirection: 'row', margin: 5}}>
-        <View style={{alignItems: 'flex-start', flexDirection: 'row'}}>
+      <View style={styles.buttonRow}>
+        {iconActions.map((action) => (
           <Icon.Button
-            key="back"
-            iconStyle={{marginRight: 0}}
-            name="arrow-left"
-            solid={false}
+            key={action.icon}
+            iconStyle={styles.icons}
+            name={action.icon}
             color={Palette.mainForeground}
             backgroundColor="transparent"
-            onPress={() => navigation.goBack()}
+            onPress={action.run}
           />
-          <Icon.Button
-            key="forward"
-            iconStyle={{marginRight: 0}}
-            name="arrow-right"
-            solid={false}
-            color={Palette.mainForeground}
-            backgroundColor="transparent"
-            onPress={() => webView.goForward()}
-          />
-          <Icon.Button
-            key="reload"
-            iconStyle={{marginRight: 0}}
-            name="sync"
-            solid={false}
-            color={Palette.mainForeground}
-            backgroundColor="transparent"
-            onPress={() => webView.reload()}
-          />
-        </View>
+        ))}
+        {loading && <ActivityIndicator size="large" color="black" />}
       </View>
     </View>
   );
 }
-
-ArticleDetail.navigationOptions = ({navigation}) => {
-  const {state} = navigation;
-  return {
-    title: `${state.params.article?.title}`,
-  };
-};
