@@ -28,7 +28,7 @@
     "buffer": "5.x.x",
     "events": "^3.2.0",
     "html-to-text": "5.x.x",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "prop-types": "15.x.x",
     "react": "16.13.1",
