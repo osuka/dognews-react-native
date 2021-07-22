@@ -9,6 +9,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param limit Number of results to return per page.
      * @param offset The initial index from which to return the results.
      * @result any
@@ -36,6 +41,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param data
      * @result ModeratedSubmission
      * @throws ApiError
@@ -53,6 +63,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this moderated submission.
      * @result ModeratedSubmission
      * @throws ApiError
@@ -69,6 +84,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this moderated submission.
      * @param data
      * @result ModeratedSubmission
@@ -88,6 +108,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this moderated submission.
      * @param data
      * @result ModeratedSubmission
@@ -107,6 +132,11 @@ export class ModeratedsubmissionsService {
 
     /**
      * Accepted articles in moderation
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND the user is NOT in a group called 'Moderators' group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this moderated submission.
      * @result any
      * @throws ApiError
@@ -126,6 +156,11 @@ export class ModeratedsubmissionsService {
      * that must be passed as `moderatedsubmission_pk` kwarg
      * * multiple posts to the collection from same users will not create
      * multiple instances, instead subsequent posts will update their vote
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     * AND if the user is not in the Moderators group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param moderatedSubmissionPk
      * @param limit Number of results to return per page.
      * @param offset The initial index from which to return the results.
@@ -158,6 +193,11 @@ export class ModeratedsubmissionsService {
      * that must be passed as `moderatedsubmission_pk` kwarg
      * * multiple posts to the collection from same users will not create
      * multiple instances, instead subsequent posts will update their vote
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     * AND if the user is not in the Moderators group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param moderatedSubmissionPk
      * @param data
      * @result Vote

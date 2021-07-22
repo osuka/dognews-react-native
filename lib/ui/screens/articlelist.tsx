@@ -1,14 +1,26 @@
 import { useNavigation } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
+import moment from 'moment';
 import React, { ReactNode } from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Article } from '../../generated/dognewsserverclient/models/Article';
+import { ArticlesService } from '../../generated/dognewsserverclient/services/ArticlesService';
 import { extractDomain } from '../../services/extractDomain';
 import { RootStackParamList } from '../Root';
+
 // @ts-ignore
 // TODO: importing images from typescript gets a bit bonkers, better way?
 const logo = require('../../../assets/onlydognews-logo-main.png');
+const circularLoading = require('../../../assets/loading-circular-dots.png');
 
 // Multiple components in this one file. TODO: refactor out when settled
 
@@ -17,12 +29,8 @@ const logo = require('../../../assets/onlydognews-logo-main.png');
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
-  },
-
-  screenMain: {
-    flex: 1,
     alignContent: 'stretch',
-    flexGrow: 0.9,
+    flexGrow: 1,
     flexDirection: 'column',
   },
 
@@ -53,36 +61,37 @@ export const ArticleCard = ({ article }: { article: Article }) => {
       article: article,
     });
   };
+  const date = moment(article.date_created).format('LL');
   return (
     <Card>
       <View style={articleCardStyles.imageContainer}>
         <Image
-          source={{ uri: article.thumbnail }}
+          source={{ uri: `https://onlydognews.com${article.thumbnail}` }}
           style={articleCardStyles.image}
-          loadingIndicatorSource={logo}
+          loadingIndicatorSource={circularLoading}
         />
         <Text style={articleCardStyles.domain}>
           {article.target_url ? extractDomain(article.target_url) : ''}
         </Text>
       </View>
       <View style={articleCardStyles.contents}>
-        <TouchableWithoutFeedback onPress={goToArticle}>
+        <TouchableOpacity onPress={goToArticle}>
           <Text style={articleCardStyles.title}>{article.title}</Text>
           <Text style={articleCardStyles.text}>{article.description}</Text>
 
           <View style={articleCardStyles.footerContainer}>
-            <Text style={articleCardStyles.avatarName}>{article.date_created}</Text>
             <View style={articleCardStyles.avatarContainer}>
               <Image
                 source={{
-                  uri: `https://onlydognews.com/gfx/site/${article.submitter}-logo.png`,
+                  // uri: `https://onlydognews.com/gfx/site/${article.submitter}-logo.png`,
+                  uri: `https://onlydognews.com/gfx/site/markus-logo.png`,
                 }}
                 style={articleCardStyles.avatarImage}
               />
+              <Text style={articleCardStyles.avatarName}>{date}</Text>
             </View>
-            <Text style={articleCardStyles.avatarName}>{article.submitter}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
       </View>
     </Card>
   );
@@ -141,7 +150,7 @@ const articleCardStyles = StyleSheet.create({
     flex: 1,
     // backgroundColor: 'brown',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
   },
 
   avatarImage: {
@@ -153,43 +162,52 @@ const articleCardStyles = StyleSheet.create({
   avatarName: {
     color: 'black',
     fontSize: 10,
-    alignSelf: 'center',
     marginHorizontal: 2,
+    textAlignVertical: 'bottom',
+    textAlign: 'right',
+    flexGrow: 1,
+    flex: 1,
   },
 });
 
 // ============= article list
 
 export default function ArticleListScreen(): React.ReactElement {
-  const articles = [];
-  for (let index = 0; index < 100; index++) {
-    const art: Article = {
-      url: 'google.com',
-      target_url:
-        'https://abcnews.go.com/amp/US/toy-poodle-found-alive-hawk-snatches-owners-pennsylvania/story?id=69162940',
-      status: 'visible',
-      title: "Toy poodle found alive after hawk snatches it from owner's Pennsylvania backyard",
-      description:
-        '“A toy poodle miraculously survived a night in the bitter cold despite being being targeted by a hawk for the bird of prey’s next meal. The lucky pup also survived 10-degree weather the night it went missing.”',
-      thumbnail:
-        'https://onlydognews.com/gfx/posts/2020-02-26-toy-poodle-found-alive-after-hawk-snatches-it-from-owners-pennsylvania-backyard-thumb.png',
-      last_updated: Date.now().toLocaleString(),
-      date_created: Date.now().toLocaleString(),
-      submitter: 'markus',
-      moderated_submission: 'pepe',
-      approver: 'osuka',
-    };
+  const [articles, setArticles] = React.useState<Array<Article>>([]);
+  const [loading, setLoading] = React.useState(true);
 
-    articles.push(art);
-  }
+  const loadData = () => {
+    if (!loading) {
+      setLoading(true);
+      // prevent double refresh
+      ArticlesService.articlesList(1000).then(({ results }) => {
+        setArticles(results as Array<Article>);
+        setLoading(false);
+      });
+    }
+  };
 
-  return (
-    <ScrollView style={styles.screen} contentInsetAdjustmentBehavior="automatic">
-      <View style={styles.screenMain}>
-        {articles.map((article, index) => (
-          <ArticleCard key={`key-${index}`} article={article} />
-        ))}
-      </View>
-    </ScrollView>
+  const renderItem = ({ item }: { item: Article }) => <ArticleCard article={item} />;
+
+  // TODO: pagination
+  React.useEffect(() => {
+    ArticlesService.articlesList(1000).then(({ results }) => {
+      setArticles(results as Array<Article>);
+      setLoading(false);
+    });
+  }, []);
+
+  return loading ? (
+    <ActivityIndicator size="large" style={styles.screen} color="blue" />
+  ) : (
+    <View style={styles.screen}>
+      <FlatList<Article>
+        data={articles}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => item.target_url || index.toString()}
+        windowSize={20}
+      />
+    </View>
   );
 }

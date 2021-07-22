@@ -105,7 +105,14 @@ export const App = () => {
   return (
     <LoginContext.Provider value={{ loginStatus, setLoginStatus }}>
       <NavigationContainer>
-        <Drawer.Navigator initialRouteName="HomeNavigator" drawerType="slide">
+        <Drawer.Navigator
+          initialRouteName="HomeNavigator"
+          drawerType="slide"
+          drawerContentOptions={{
+            labelStyle: {
+              fontSize: 24,
+            },
+          }}>
           <Stack.Screen name="News" component={HomeNavigatorScreen} />
           <Stack.Screen name="Collaborate" component={ModerationScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

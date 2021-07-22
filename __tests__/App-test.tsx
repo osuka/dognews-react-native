@@ -8,7 +8,13 @@ import 'react-native';
 import React from 'react';
 import App from '../App';
 
-import {create, act} from 'react-test-renderer';
+import { create, act } from 'react-test-renderer';
+
+beforeAll(() => {
+  jest.mock('react-native-reanimated', () =>
+    jest.requireActual('../../node_modules/react-native-reanimated/mock'),
+  );
+});
 
 beforeEach(() => {
   jest.resetModules();

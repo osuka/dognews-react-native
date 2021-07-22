@@ -8,6 +8,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param limit Number of results to return per page.
      * @param offset The initial index from which to return the results.
      * @result any
@@ -35,6 +40,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param data
      * @result Submission
      * @throws ApiError
@@ -52,6 +62,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this submission.
      * @result Submission
      * @throws ApiError
@@ -68,6 +83,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this submission.
      * @param data
      * @result Submission
@@ -87,6 +107,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this submission.
      * @param data
      * @result Submission
@@ -106,6 +131,11 @@ export class SubmissionsService {
 
     /**
      * Submitted articles for review
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this submission.
      * @result any
      * @throws ApiError

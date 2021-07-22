@@ -9,6 +9,11 @@ export class VotesService {
     /**
      * Votes detail and delete. We allow a subset of functionality, the rest must go
      * through /moderatedsubmission/<pk>/votes
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     * AND if the user is not in the Moderators group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this vote.
      * @result Vote
      * @throws ApiError
@@ -26,6 +31,11 @@ export class VotesService {
     /**
      * Votes detail and delete. We allow a subset of functionality, the rest must go
      * through /moderatedsubmission/<pk>/votes
+     *
+     * **Permissions:**
+     * + `IsAuthenticated`: *Rejects all operations if the user is not authenticated*
+     * + `IsOwnerOrModeratorOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called 'owner' and its value differs from the request user     * AND if the user is not in the Moderators group     Everything else is allowed*
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this vote.
      * @result any
      * @throws ApiError

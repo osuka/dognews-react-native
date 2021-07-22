@@ -7,6 +7,10 @@ import { request as __request } from '../core/request';
 export class UsersService {
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param limit Number of results to return per page.
      * @param offset The initial index from which to return the results.
      * @result any
@@ -33,6 +37,10 @@ export class UsersService {
     }
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param data
      * @result User
      * @throws ApiError
@@ -49,6 +57,10 @@ export class UsersService {
     }
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this user.
      * @result User
      * @throws ApiError
@@ -64,6 +76,10 @@ export class UsersService {
     }
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this user.
      * @param data
      * @result User
@@ -82,6 +98,10 @@ export class UsersService {
     }
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this user.
      * @param data
      * @result User
@@ -100,6 +120,10 @@ export class UsersService {
     }
 
     /**
+     *
+     *
+     * **Permissions:**
+     * + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param id A unique integer value identifying this user.
      * @result any
      * @throws ApiError

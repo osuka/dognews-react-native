@@ -1,7 +1,7 @@
 import { RouteProp } from '@react-navigation/core';
 import { StackNavigationProp } from '@react-navigation/stack';
 import * as React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { WebView } from 'react-native-webview';
 import { Palette } from '../Palette';
@@ -26,6 +26,13 @@ const styles = StyleSheet.create({
   webview: {},
   buttonRow: { alignItems: 'flex-start', flexDirection: 'row' },
   icons: { marginRight: 0 },
+  privacyText: {
+    textAlignVertical: 'center',
+    flexGrow: 1,
+    flex: 1,
+    fontStyle: 'italic',
+    left: 6,
+  },
 });
 
 export function ArticleDetail({ route, navigation }: Props) {
@@ -64,6 +71,9 @@ export function ArticleDetail({ route, navigation }: Props) {
           />
         ))}
         {loading && <ActivityIndicator size="large" color="black" />}
+        <View>
+          <Text style={styles.privacyText}>Privacy on: Browser will forget cookies</Text>
+        </View>
       </View>
     </View>
   );

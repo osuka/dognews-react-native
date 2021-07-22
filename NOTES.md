@@ -1,6 +1,136 @@
 # Developer mini blog
 
 > A collection of notes for me and my future self
+---
+
+## 2021-07-21 Update everything
+
+Update everything to the latest version. Many things break.
+
+```sh
+npm i --save-dev @babel/preset-typescript
+vim babel.config.js, add @babel/preset-typescript to list of packages
+npm i --save-dev @types/jest
+npm i --save-dev ts-node
+```
+
+Need to update react-navigation.ts configuration following [the official instructions](https://reactnavigation.org/docs/testing/)
+
+ERROR:
+
+Running on android fails with a mystical "Could not initialize class org.codehaus.groovy.runtime.InvokerHelper" this seems to be because I have reinstalled android studio/java/gradle etc and am starting from zero.
+
+* Create a new app from scratch to check what's changed
+* mkdir p && cd p && npx react-native init AwesomeProject (with react loaded)
+* Differences since last react-native-version:
+  * metro.config.js now has inlineRequires set to true (copy change)
+  * build.gradle, gradle.properties changed versions (build tools 29.0.2->29.0.3, minsdk 16->21) (copy change)
+  * gradlew.bat changed (copy change)
+  * settings.gradle, gradlew unchanged
+  * gradle-wrapper.properties moves from 6.2 to 6.7 (copy change)
+  * app/build.gradle sameish
+  * app/src/main/AndroidManifest.xml -> there is no `<activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />` i don't remember
+
+Now getting:
+
+```text
+>  General error during semantic analysis: Unsupported class file major version 61
+Could not compile settings file '/home/osuka/Documents/non-shared-code/dognews-checker-react/android/settings.gradle'.
+> startup failed:
+  General error during semantic analysis: Unsupported class file major version 61
+```
+
+Add the JDK that is included with Android Studio and use that one:
+
+```bash
+jenv add /opt/android-studio/jre
+```
+
+It now complains of the SDK license. Suggests `$ANDROID_HOME/tools/bin/sdkmanager --licenses` but this doesn't work with openjdk (`Exception in thread "main" java.lang.NoClassDefFoundError: javax/xml/bind/annotation/XmlSchema`)
+Approve the licenses by going to Android Studio / SDK Manager and installing
+
+- Android SDK Command-line Tools (latest) version 4.0
+
+> Note: the runner is smart enough to install "Install Android SDK Platform 29 (revision: 5)" even though I had a different version installed in Android Studio.
+
+The latest version of [html-to-text](https://github.com/html-to-text/node-html-to-text) is 8.0.0 but it breaks, keeping it at 5.x.x.
+
+Issue:
+> Require cycle with fetch.js while debugging
+
+## 2020-10-09 A note on dependencies
+
+It's funny how things get complicated over time and package.json without comments doesn't help that much. So far:
+
+- moment: just because the date API is still a pain
+
+- react-native:
+  react
+  react-native
+
+- font awesome support:
+  react-native-vector-icons
+
+- web view support:
+  react-native-webview
+
+- react navigation:
+  @react-navigation/core, @react-navigation/drawer, @react-navigation/native, @react-navigation/stack, which need:
+  react-native-reanimated react-native-gesture-handler react-native-screens react-native-safe-area-context @react-native-community/masked-view
+
+- html-to-text includes htmlparser2 which in node needs:
+  events buffer
+
+- for offline storage:
+  @react-native-community/async-storage
+
+- oauth:
+  react-native-app-auth
+
+- temporarily (to be moved to ActivityIndicator):
+  react-native-loading-spinner-overlay
+
+For dev we have all the available type definitions, plugins for eslint, babel, jest:
+
+- typescript
+- types: @types/jest, @types/react, @types/react-native, @types/react-native-vector-icons
+- for syntax: prettier
+- for linting: @react-native-community/eslint-config, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint
+- for testing: @testing-library/jest-native, @testing-library/react-native, @types/react-test-renderer, react-test-renderer, babel-jest, jest
+  - identity-obj-proxy: we use this so that when we are importing an image via `import`, jest doesn't get confused during parsing - it replaces it with an empty javascript
+- for building: metro-react-native-babel-preset
+- per app: mock-async-storage
+
+---
+
+## 2020-10-07 FlatList vs collection of Views
+
+While doing the refactoring and setting up the layout I used just a set of Views one under the other. It's a quick way to see how they look without getting side effects. Once it is more or less set we need to move to a more optimized structure as it will choke after enough elements.
+
+Draft version:
+
+* A ScrollView containing Views
+
+Final version:
+
+* A flatlist (flatlist should never go inside scroll views). Some notes:
+* renderItem simply returns a View object
+* keyExtractor assigns a key attribute to each node (mandatory if we don't add the key directly).
+* windowSize how many viewports to cache, can be tweaked to prevent blank spaces while scrolling
+
+```jsx
+    <View style={styles.screenMain}>
+      <FlatList<Article>
+        data={articles}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => item.target_url || index.toString()}
+        windowSize={20}
+      />
+    </View>
+```
+
+More details [in the docs](https://reactnative.dev/docs/flatlist).
 
 ---
 
