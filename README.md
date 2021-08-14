@@ -6,6 +6,8 @@ retrieved and decide manually what to post to a news aggregator [only dog news](
 This is an internal tool intended also as a testbed for me to try react native while actually making
 something I can use.
 
+You may find bits of code you'd like to check/copy - be my guest
+
 ## Setup
 
 This project is a multiplatform react native mobile application. The number of dependencies and the
@@ -31,8 +33,9 @@ from the root of the project. Alternatively install the latest node 10.x any oth
 I recommend [jEnv](http://www.jenv.be/) to setup java if you'll have multiple versions. If not, just make
 sure to have java 1.8+ installed.
 
-Note that react native requires (at the time of writing) java 1.8, which is very annoying if you are a developer.
-On Mac OS X you can get it by installing the [brew](https://brew.sh/) package manager and running `brew cask install adoptopenjdk8`
+* Confirmed to work under linux with openjdk 11.
+
+> Note that react native used to require specifically java 1.8.x, which was very annoying if you are a developer. If there's issues with java you can always try with that. On Mac OS X you can get it by installing the [brew](https://brew.sh/) package manager and running `brew cask install adoptopenjdk8`
 
 #### Android SDK
 

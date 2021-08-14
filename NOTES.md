@@ -3,6 +3,43 @@
 > A collection of notes for me and my future self
 ---
 
+## 2021-08-13 Migrate openapi client generator
+
+https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/typescript-axios.md
+
+Will be moving to using the same one we are using for python, https://github.com/OpenAPITools/openapi-generator
+
+```sh
+npx @openapitools/openapi-generator-cli generate -i ../dognews-server/openapi-schema.yml -g typescript-axios -o lib/generated/api_client --additional-properties=disallowAdditionalPropertiesIfNotPresent=false,paramNaming=camelCase,modelPropertyNaming=original,enumPropertyNaming=original
+```
+Reference guide: https://majidlotfinia.medium.com/openapi-generator-for-react-native-by-swagger-58847cadd9e8
+
+> There are several additional properties that can added simply separated by commas in the value like `--additional-properties=disallowAdditionalPropertiesIfNotPresent=false`
+
+For this to work we need:
+
+```sh
+npm i --save react-native-url-polyfill
+```
+
+And loading it as `import 'react-native-url-polyfill/auto';`
+
+Otherwise we will get:
+
+```text
+Error: not implemented
+ at URL.get (URL.js:195)
+ at setSearchParams (common.ts:91)
+ at getPetById$ (api.ts:450)
+ at tryCatch (runtime.js:63)
+ at Generator.invoke [as _invoke] (runtime.js:293)
+ at Generator.next (runtime.js:118)
+ at tryCatch (runtime.js:63)
+ at invoke (runtime.js:154)
+ at runtime.js:164
+ at tryCallOne (core.js:37)
+```
+
 ## 2021-07-21 Update everything
 
 Update everything to the latest version. Many things break.
@@ -62,44 +99,56 @@ Issue:
 
 It's funny how things get complicated over time and package.json without comments doesn't help that much. So far:
 
-- moment: just because the date API is still a pain
+* moment: just because the date API is still a pain
 
-- react-native:
+* react-native:
   react
   react-native
 
-- font awesome support:
+* font awesome support:
   react-native-vector-icons
 
-- web view support:
+* web view support:
   react-native-webview
 
-- react navigation:
+* react navigation:
   @react-navigation/core, @react-navigation/drawer, @react-navigation/native, @react-navigation/stack, which need:
   react-native-reanimated react-native-gesture-handler react-native-screens react-native-safe-area-context @react-native-community/masked-view
 
-- html-to-text includes htmlparser2 which in node needs:
+* html-to-text includes htmlparser2 which in node needs:
   events buffer
 
-- for offline storage:
+* for offline storage:
   @react-native-community/async-storage
 
-- oauth:
+* oauth:
   react-native-app-auth
 
-- temporarily (to be moved to ActivityIndicator):
+* temporarily (to be moved to ActivityIndicator):
   react-native-loading-spinner-overlay
 
 For dev we have all the available type definitions, plugins for eslint, babel, jest:
 
-- typescript
-- types: @types/jest, @types/react, @types/react-native, @types/react-native-vector-icons
-- for syntax: prettier
-- for linting: @react-native-community/eslint-config, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint
-- for testing: @testing-library/jest-native, @testing-library/react-native, @types/react-test-renderer, react-test-renderer, babel-jest, jest
-  - identity-obj-proxy: we use this so that when we are importing an image via `import`, jest doesn't get confused during parsing - it replaces it with an empty javascript
-- for building: metro-react-native-babel-preset
-- per app: mock-async-storage
+* typescript
+* types: @types/jest, @types/react, @types/react-native, @types/react-native-vector-icons
+* for syntax: prettier
+* for linting: @react-native-community/eslint-config, @typescript-eslint/eslint-plugin, @typescript-eslint/parser, eslint
+* for testing: @testing-library/jest-native, @testing-library/react-native, @types/react-test-renderer, react-test-renderer, babel-jest, jest
+  * identity-obj-proxy: we use this so that when we are importing an image via `import`, jest doesn't get confused during parsing - it replaces it with an empty javascript
+* for building: metro-react-native-babel-preset
+* per app: mock-async-storage
+
+Interestengly there is still a require cycle with using `fetch()`. Known and ignored https://github.com/facebook/react-native/issues/23130, https://github.com/facebook/metro/issues/287.
+
+The recommended workaround in the comments there is to disable cycles in node_modules, I'm making it more detailed to ignore just the one I'm getting:
+
+```js
+import { LogBox } from 'react-native'
+
+LogBox.ignoreLogs([
+  'Require cycle: node_modules/react-native/Libraries/Network/fetch.js'
+])
+```
 
 ---
 
@@ -139,7 +188,7 @@ More details [in the docs](https://reactnative.dev/docs/flatlist).
 Our django backend utilizes an app that exports a swagger view and swagger provides a converter to openapi.
 
 ```sh
-curl -o openapi.spec https://dognewsserver.gatillos.com/swagger/?format=openapi
+curl -o openapi.spec "https://dognewsserver.gatillos.com/api/schema/?format=json"
 npx openapi-typescript-codegen \
   -i openapi.spec \
   -o lib/generated/dognewsserverclient \
@@ -285,9 +334,6 @@ The callback comes via openURL app delegate, so we register our delegate that wi
 @end
 ```
 
-
-
-
 ---
 
 ## 2019-12-18 Migrating Authentication / Authorization to Okta
@@ -372,7 +418,6 @@ UPDATE /App.js (3152 bytes)
   The only thing it does is `import ./Auth` and add `<Auth />` in the page.
 
 > ^ the above is in commit e5ae41d41a45913abf755196830b73dd5ed10313
-
 
 ---
 
@@ -547,7 +592,6 @@ This launches the app and starts listening, but breakpoints don't work yet.
 
 To launch the debug menu in the emulator we press
 
-> COMMAND+M   a couple of times means shake
+> COMMAND+M  (or CTRL+M)  a couple of times means shake
 
 and then from there select 'Debug JS Remotely'
-

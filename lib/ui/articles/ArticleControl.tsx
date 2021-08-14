@@ -17,8 +17,7 @@ export type ArticleContextType = {
   setItemList: (items: Array<Item>) => void;
   fetchingStatus: boolean;
   setFetchingStatus: (status: boolean) => void;
-
-  source: string; // 'api' for moderation API call w/login, URL for static list
+  source: string; // 'api' if we are to use the server API
 };
 
 export const ArticleControl = {
@@ -69,6 +68,8 @@ export const ArticleControl = {
         .concat(ctx.itemList);
 
       ctx.setItemList(newList);
+    } catch (e) {
+      console.log("Error could not fetch", e);
     } finally {
       ctx.setFetchingStatus(false);
     }

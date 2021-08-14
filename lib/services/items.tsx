@@ -1,7 +1,7 @@
 // import authConfig from '../../auth.config';
 import { LoginState } from '../models/login';
 import { Item } from '../models/items';
-import { ArticlesService } from '../generated/dognewsserverclient';
+import { articlesApi, Article } from '../generated/api_client';
 
 export const ItemService = {
   async getAll(loginStatus: LoginState) {
@@ -13,8 +13,11 @@ export const ItemService = {
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', `Token ${loginStatus.accessToken}`);
 
-    const response = await ArticlesService.articlesList();
+    const response = await articlesApi.articlesList();
     const articles = response.results;
+    if (!articles) {
+      return articles;
+    }
 
     // move from backend model to our app model
     const items: Array<Item> = [];

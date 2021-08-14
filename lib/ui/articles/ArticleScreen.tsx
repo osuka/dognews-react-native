@@ -19,7 +19,7 @@ export default function ArticleScreen(): React.ReactElement {
     setFetchingStatus: feedSetFetchingStatus,
     itemList: feedItemList,
     setItemList: feedSetItemList,
-    source: 'https://onlydognews.com/latest-news.json',
+    source: 'https://onlydognews.com/',
   };
 
   // fetch latest news, and do it again if login status changes

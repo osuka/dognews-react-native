@@ -18,10 +18,11 @@
       "program": "${workspaceFolder}/node_modules/jest/bin/jest"
     },
     {
-      "type": "node",
+      "name": "React Native Android",
+      "cwd": "${workspaceFolder}",
+      "type": "reactnative",
       "request": "launch",
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/start"
+      "platform": "android"
     }
   ]
 }

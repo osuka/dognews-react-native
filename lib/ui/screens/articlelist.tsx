@@ -4,6 +4,7 @@ import moment from 'moment';
 import React, { ReactNode } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -12,10 +13,10 @@ import {
   View,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Article } from '../../generated/dognewsserverclient/models/Article';
-import { ArticlesService } from '../../generated/dognewsserverclient/services/ArticlesService';
 import { extractDomain } from '../../services/extractDomain';
 import { RootStackParamList } from '../Root';
+import { Article } from '../../generated/api_client';
+import { articlesApi } from '../../services/apiClient';
 
 // @ts-ignore
 // TODO: importing images from typescript gets a bit bonkers, better way?
@@ -172,38 +173,64 @@ const articleCardStyles = StyleSheet.create({
 
 // ============= article list
 
+const loadData = async (
+  loading: boolean,
+  setLoading: (value: boolean) => void,
+  setArticles: (articles: Array<Article>) => void,
+) => {
+  try {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    const response = await articlesApi.articlesList(100);
+    setArticles(response.data.results as Array<Article>);
+  } finally {
+    setLoading(false);
+  }
+};
+
 export default function ArticleListScreen(): React.ReactElement {
   const [articles, setArticles] = React.useState<Array<Article>>([]);
-  const [loading, setLoading] = React.useState(true);
-
-  const loadData = () => {
-    if (!loading) {
-      setLoading(true);
-      // prevent double refresh
-      ArticlesService.articlesList(1000).then(({ results }) => {
-        setArticles(results as Array<Article>);
-        setLoading(false);
-      });
-    }
-  };
+  const [loading, setLoading] = React.useState(false);
+  const [firstRun, setFirstRun] = React.useState(true);
+  const [errored, setErrored] = React.useState<string>('');
 
   const renderItem = ({ item }: { item: Article }) => <ArticleCard article={item} />;
 
-  // TODO: pagination
-  React.useEffect(() => {
-    ArticlesService.articlesList(1000).then(({ results }) => {
-      setArticles(results as Array<Article>);
-      setLoading(false);
-    });
-  }, []);
+  if (firstRun) {
+    setFirstRun(false);
+    async function initialize() {
+      try {
+        setErrored('');
+        await loadData(loading, setLoading, setArticles);
+      } catch (error) {
+        setErrored('Could not load articles (please try again later)\n' + error);
+        setTimeout(() => setErrored(''), 10000);
+        // TODO: add more detail, prettier display instead of just a Text
+        // Alert.alert('Could not fetch articles (Not connected to the internet?)');
+      } finally {
+      }
+    }
+    initialize();
+  }
 
   return loading ? (
-    <ActivityIndicator size="large" style={styles.screen} color="blue" />
+    <View style={styles.screen}>
+      <Text>{errored}</Text>
+      <ActivityIndicator size="large" style={styles.screen} color="blue" />
+    </View>
   ) : (
     <View style={styles.screen}>
+      <Text style={{ textAlign: 'center' }}>{errored}</Text>
       <FlatList<Article>
         data={articles}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={loadData} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => loadData(loading, setLoading, setArticles)}
+          />
+        }
         renderItem={renderItem}
         keyExtractor={(item, index) => item.target_url || index.toString()}
         windowSize={20}

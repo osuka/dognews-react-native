@@ -18,8 +18,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import { Palette } from '../Palette';
 import { Rating } from '../Rating';
-import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleControl';
-import { Item, NewsItemRating } from '../../models/items';
+import { ArticleContext, ArticleControl } from './ArticleControl';
+import { Item } from '../../models/items';
 import { extractDomain } from '../../services/extractDomain';
 
 // Layout animation is disabled by default
