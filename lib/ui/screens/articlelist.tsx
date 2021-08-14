@@ -67,7 +67,7 @@ export const ArticleCard = ({ article }: { article: Article }) => {
     <Card>
       <View style={articleCardStyles.imageContainer}>
         <Image
-          source={{ uri: `https://onlydognews.com${article.thumbnail}` }}
+          source={{ uri: article.thumbnail }}
           style={articleCardStyles.image}
           loadingIndicatorSource={circularLoading}
         />

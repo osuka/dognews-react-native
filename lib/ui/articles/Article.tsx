@@ -112,7 +112,7 @@ export function Article({
                 source={{
                   uri: item.thumbnail?.startsWith('http')
                     ? item.thumbnail
-                    : 'https://gatillos.com/onlydognews-assets/' + item.thumbnail,
+                    : 'https://dognewsserver.gatillos.com/media/' + item.thumbnail,
                 }}
               />
             </TouchableOpacity>
@@ -149,7 +149,7 @@ export function Article({
                       source={{
                         uri: item.thumbnail?.startsWith('http')
                           ? item.thumbnail
-                          : 'https://gatillos.com/onlydognews-assets/' + item.thumbnail,
+                          : 'https://dognewsserver.gatillos.com/media/' + item.thumbnail,
                       }}
                     />
                   </View>

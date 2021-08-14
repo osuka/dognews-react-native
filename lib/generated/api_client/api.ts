@@ -160,6 +160,12 @@ export interface Fetch {
      * @type {string}
      * @memberof Fetch
      */
+    generated_thumbnail?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Fetch
+     */
     thumbnail_image?: string | null;
     /**
      * 
@@ -493,6 +499,12 @@ export interface PatchedFetch {
      * @type {string}
      * @memberof PatchedFetch
      */
+    generated_thumbnail?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedFetch
+     */
     thumbnail_image?: string | null;
     /**
      * 
@@ -622,6 +634,12 @@ export interface PatchedSubmission {
      * @memberof PatchedSubmission
      */
     date?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PatchedSubmission
+     */
+    fetch?: string;
 }
 /**
  * 
@@ -708,6 +726,12 @@ export interface Submission {
      * @memberof Submission
      */
     date?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof Submission
+     */
+    fetch: string;
 }
 /**
  * 
@@ -2829,9 +2853,11 @@ export const SubmissionsApiAxiosParamCreator = function (configuration?: Configu
          * Submitted articles for review  **Permission restrictions:** + `IsAuthenticated`: *Rejects all operations if the user is not authenticated* + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called \'owner\' and its value differs from the request user     Everything else is allowed* + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
          * @param {'failed' | 'passed' | 'pending'} [analysisStatus] 
          * @param {boolean} [analysisStatusIsnull] 
+         * @param {boolean} [fetchGeneratedThumbnailIsnull] 
          * @param {boolean} [fetchIsnull] 
          * @param {'fetched' | 'pending' | 'rej_error' | 'rej_fetch'} [fetchStatus] 
          * @param {boolean} [fetchStatusIsnull] 
+         * @param {boolean} [fetchThumbnailIsnull] 
          * @param {number} [limit] Number of results to return per page.
          * @param {boolean} [moderationIsnull] 
          * @param {'accepted' | 'pending' | 'rejected'} [moderationStatus] 
@@ -2842,7 +2868,7 @@ export const SubmissionsApiAxiosParamCreator = function (configuration?: Configu
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        submissionsList: async (analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options: any = {}): Promise<RequestArgs> => {
+        submissionsList: async (analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchGeneratedThumbnailIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, fetchThumbnailIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options: any = {}): Promise<RequestArgs> => {
             const localVarPath = `/submissions`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -2876,6 +2902,10 @@ export const SubmissionsApiAxiosParamCreator = function (configuration?: Configu
                 localVarQueryParameter['analysis__status__isnull'] = analysisStatusIsnull;
             }
 
+            if (fetchGeneratedThumbnailIsnull !== undefined) {
+                localVarQueryParameter['fetch__generated_thumbnail__isnull'] = fetchGeneratedThumbnailIsnull;
+            }
+
             if (fetchIsnull !== undefined) {
                 localVarQueryParameter['fetch__isnull'] = fetchIsnull;
             }
@@ -2886,6 +2916,10 @@ export const SubmissionsApiAxiosParamCreator = function (configuration?: Configu
 
             if (fetchStatusIsnull !== undefined) {
                 localVarQueryParameter['fetch__status__isnull'] = fetchStatusIsnull;
+            }
+
+            if (fetchThumbnailIsnull !== undefined) {
+                localVarQueryParameter['fetch__thumbnail__isnull'] = fetchThumbnailIsnull;
             }
 
             if (limit !== undefined) {
@@ -3388,9 +3422,11 @@ export const SubmissionsApiFp = function(configuration?: Configuration) {
          * Submitted articles for review  **Permission restrictions:** + `IsAuthenticated`: *Rejects all operations if the user is not authenticated* + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called \'owner\' and its value differs from the request user     Everything else is allowed* + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
          * @param {'failed' | 'passed' | 'pending'} [analysisStatus] 
          * @param {boolean} [analysisStatusIsnull] 
+         * @param {boolean} [fetchGeneratedThumbnailIsnull] 
          * @param {boolean} [fetchIsnull] 
          * @param {'fetched' | 'pending' | 'rej_error' | 'rej_fetch'} [fetchStatus] 
          * @param {boolean} [fetchStatusIsnull] 
+         * @param {boolean} [fetchThumbnailIsnull] 
          * @param {number} [limit] Number of results to return per page.
          * @param {boolean} [moderationIsnull] 
          * @param {'accepted' | 'pending' | 'rejected'} [moderationStatus] 
@@ -3401,8 +3437,8 @@ export const SubmissionsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSubmissionList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.submissionsList(analysisStatus, analysisStatusIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options);
+        async submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchGeneratedThumbnailIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, fetchThumbnailIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PaginatedSubmissionList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.submissionsList(analysisStatus, analysisStatusIsnull, fetchGeneratedThumbnailIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, fetchThumbnailIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -3551,9 +3587,11 @@ export const SubmissionsApiFactory = function (configuration?: Configuration, ba
          * Submitted articles for review  **Permission restrictions:** + `IsAuthenticated`: *Rejects all operations if the user is not authenticated* + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called \'owner\' and its value differs from the request user     Everything else is allowed* + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
          * @param {'failed' | 'passed' | 'pending'} [analysisStatus] 
          * @param {boolean} [analysisStatusIsnull] 
+         * @param {boolean} [fetchGeneratedThumbnailIsnull] 
          * @param {boolean} [fetchIsnull] 
          * @param {'fetched' | 'pending' | 'rej_error' | 'rej_fetch'} [fetchStatus] 
          * @param {boolean} [fetchStatusIsnull] 
+         * @param {boolean} [fetchThumbnailIsnull] 
          * @param {number} [limit] Number of results to return per page.
          * @param {boolean} [moderationIsnull] 
          * @param {'accepted' | 'pending' | 'rejected'} [moderationStatus] 
@@ -3564,8 +3602,8 @@ export const SubmissionsApiFactory = function (configuration?: Configuration, ba
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any): AxiosPromise<PaginatedSubmissionList> {
-            return localVarFp.submissionsList(analysisStatus, analysisStatusIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options).then((request) => request(axios, basePath));
+        submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchGeneratedThumbnailIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, fetchThumbnailIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any): AxiosPromise<PaginatedSubmissionList> {
+            return localVarFp.submissionsList(analysisStatus, analysisStatusIsnull, fetchGeneratedThumbnailIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, fetchThumbnailIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options).then((request) => request(axios, basePath));
         },
         /**
          * Moderation attached to a submission  **Permission restrictions:** + `IsAuthenticated`: *Rejects all operations if the user is not authenticated* + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called \'owner\' and its value differs from the request user     Everything else is allowed* + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
@@ -3715,9 +3753,11 @@ export class SubmissionsApi extends BaseAPI {
      * Submitted articles for review  **Permission restrictions:** + `IsAuthenticated`: *Rejects all operations if the user is not authenticated* + `IsOwnerOrStaff`: *Blocks update/partial_updated/destroy if:     * the user is NOT in the staff group     * AND if the model has a property called \'owner\' and its value differs from the request user     Everything else is allowed* + `DjangoModelPermissions`: *The request is authenticated using `django.contrib.auth` permissions.     See: https://docs.djangoproject.com/en/dev/topics/auth/#permissions      It ensures that the user is authenticated, and has the appropriate     `add`/`change`/`delete` permissions on the model.      This permission can only be applied against view classes that     provide a `.queryset` attribute.*
      * @param {'failed' | 'passed' | 'pending'} [analysisStatus] 
      * @param {boolean} [analysisStatusIsnull] 
+     * @param {boolean} [fetchGeneratedThumbnailIsnull] 
      * @param {boolean} [fetchIsnull] 
      * @param {'fetched' | 'pending' | 'rej_error' | 'rej_fetch'} [fetchStatus] 
      * @param {boolean} [fetchStatusIsnull] 
+     * @param {boolean} [fetchThumbnailIsnull] 
      * @param {number} [limit] Number of results to return per page.
      * @param {boolean} [moderationIsnull] 
      * @param {'accepted' | 'pending' | 'rejected'} [moderationStatus] 
@@ -3729,8 +3769,8 @@ export class SubmissionsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof SubmissionsApi
      */
-    public submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any) {
-        return SubmissionsApiFp(this.configuration).submissionsList(analysisStatus, analysisStatusIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options).then((request) => request(this.axios, this.basePath));
+    public submissionsList(analysisStatus?: 'failed' | 'passed' | 'pending', analysisStatusIsnull?: boolean, fetchGeneratedThumbnailIsnull?: boolean, fetchIsnull?: boolean, fetchStatus?: 'fetched' | 'pending' | 'rej_error' | 'rej_fetch', fetchStatusIsnull?: boolean, fetchThumbnailIsnull?: boolean, limit?: number, moderationIsnull?: boolean, moderationStatus?: 'accepted' | 'pending' | 'rejected', moderationStatusIsnull?: boolean, offset?: number, ordering?: string, status?: 'accepted' | 'pending' | 'rej_banned' | 'rej_fetch' | 'rej_mod' | 'rej_sentim', options?: any) {
+        return SubmissionsApiFp(this.configuration).submissionsList(analysisStatus, analysisStatusIsnull, fetchGeneratedThumbnailIsnull, fetchIsnull, fetchStatus, fetchStatusIsnull, fetchThumbnailIsnull, limit, moderationIsnull, moderationStatus, moderationStatusIsnull, offset, ordering, status, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
