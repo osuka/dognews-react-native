@@ -133,10 +133,10 @@ export interface Fetch {
     status?: FetchStatusEnum;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Fetch
      */
-    owner: string;
+    owner: number;
     /**
      * 
      * @type {string}
@@ -225,10 +225,10 @@ export interface Moderation {
     status?: ModerationStatusEnum;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof Moderation
      */
-    owner: string;
+    owner: number;
     /**
      * 
      * @type {string}
@@ -472,10 +472,10 @@ export interface PatchedFetch {
     status?: FetchStatusEnum;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof PatchedFetch
      */
-    owner?: string;
+    owner?: number;
     /**
      * 
      * @type {string}
@@ -551,10 +551,10 @@ export interface PatchedModeration {
     status?: ModerationStatusEnum;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof PatchedModeration
      */
-    owner?: string;
+    owner?: number;
     /**
      * 
      * @type {string}
@@ -612,10 +612,10 @@ export interface PatchedSubmission {
     status?: string;
     /**
      * 
-     * @type {string}
+     * @type {User}
      * @memberof PatchedSubmission
      */
-    owner?: string;
+    owner?: User;
     /**
      * 
      * @type {string}
@@ -636,10 +636,16 @@ export interface PatchedSubmission {
     date?: string | null;
     /**
      * 
-     * @type {string}
+     * @type {Fetch}
      * @memberof PatchedSubmission
      */
-    fetch?: string;
+    fetch?: Fetch | null;
+    /**
+     * 
+     * @type {Moderation}
+     * @memberof PatchedSubmission
+     */
+    moderation?: Moderation | null;
 }
 /**
  * 
@@ -704,10 +710,10 @@ export interface Submission {
     status: string;
     /**
      * 
-     * @type {string}
+     * @type {User}
      * @memberof Submission
      */
-    owner: string;
+    owner?: User;
     /**
      * 
      * @type {string}
@@ -728,10 +734,16 @@ export interface Submission {
     date?: string | null;
     /**
      * 
-     * @type {string}
+     * @type {Fetch}
      * @memberof Submission
      */
-    fetch: string;
+    fetch?: Fetch | null;
+    /**
+     * 
+     * @type {Moderation}
+     * @memberof Submission
+     */
+    moderation?: Moderation | null;
 }
 /**
  * 

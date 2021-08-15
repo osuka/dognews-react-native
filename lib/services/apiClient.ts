@@ -6,7 +6,7 @@ import axios from 'axios';
 // Check https://github.com/axios/axios#request-config
 const axiosConfig: AxiosRequestConfig = {
   timeout: 2000, // two seconds
-  headers: { 'X-Originating-Client': 'dognews-checker-react' },
+  headers: { 'X-Originating-Client': 'dognews-react-native' },
 };
 // url?: string;
 // method?: Method;
