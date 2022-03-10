@@ -4,7 +4,6 @@ import moment from 'moment';
 import React, { ReactNode } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Image,
   RefreshControl,
@@ -17,10 +16,12 @@ import { extractDomain } from '../../services/extractDomain';
 import { RootStackParamList } from '../Root';
 import { Article } from '../../generated/api_client';
 import { articlesApi } from '../../services/apiClient';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Palette } from '../Palette';
 
 // @ts-ignore
 // TODO: importing images from typescript gets a bit bonkers, better way?
-const logo = require('../../../assets/onlydognews-logo-main.png');
+// const logo = require('../../../assets/onlydognews-logo-main.png');
 const circularLoading = require('../../../assets/loading-circular-dots.png');
 
 // Multiple components in this one file. TODO: refactor out when settled
@@ -83,13 +84,38 @@ export const ArticleCard = ({ article }: { article: Article }) => {
           <View style={articleCardStyles.footerContainer}>
             <View style={articleCardStyles.avatarContainer}>
               <Image
+                style={articleCardStyles.avatarImage}
                 source={{
                   // uri: `https://onlydognews.com/gfx/site/${article.submitter}-logo.png`,
-                  uri: `https://onlydognews.com/gfx/site/markus-logo.png`,
+                  uri: 'https://onlydognews.com/gfx/site/markus-logo.png',
                 }}
-                style={articleCardStyles.avatarImage}
               />
-              <Text style={articleCardStyles.avatarName}>{date}</Text>
+              <Text style={articleCardStyles.avatarName}>
+                {'markus\n'}
+                {date}
+              </Text>
+              <Icon.Button
+                // key={`rating-${rating}`}
+                iconStyle={articleCardStyles.icon}
+                // name={rating < 0 ? 'poo' : 'heart'}
+                name={'poo'}
+                // solid={!!rating}
+                // color={rating ? Palette.warningForeground : Palette.mainForeground}
+                color={Palette.warningForeground}
+                backgroundColor="transparent"
+                // onPress={() => ArticleControl.rateItem(articleContext, item)}
+              />
+              <Icon.Button
+                // key={`rating-${rating}`}
+                iconStyle={articleCardStyles.icon}
+                // name={rating < 0 ? 'poo' : 'heart'}
+                name={'heart'}
+                // solid={!!rating}
+                // color={rating ? Palette.warningForeground : Palette.mainForeground}
+                color={Palette.warningForeground}
+                backgroundColor="transparent"
+                // onPress={() => ArticleControl.rateItem(articleContext, item)}
+              />
             </View>
           </View>
         </TouchableOpacity>
@@ -131,6 +157,10 @@ const articleCardStyles = StyleSheet.create({
     fontSize: 13,
   },
 
+  icon: {
+    marginRight: 0,
+  },
+
   domain: {
     // backgroundColor: 'cyan',
     color: 'black',
@@ -155,8 +185,8 @@ const articleCardStyles = StyleSheet.create({
   },
 
   avatarImage: {
-    width: 16,
-    height: 16,
+    width: 32,
+    height: 32,
     marginHorizontal: 2,
   },
 
@@ -164,8 +194,8 @@ const articleCardStyles = StyleSheet.create({
     color: 'black',
     fontSize: 10,
     marginHorizontal: 2,
-    textAlignVertical: 'bottom',
-    textAlign: 'right',
+    textAlignVertical: 'top',
+    textAlign: 'left',
     flexGrow: 1,
     flex: 1,
   },
@@ -222,7 +252,7 @@ export default function ArticleListScreen(): React.ReactElement {
     </View>
   ) : (
     <View style={styles.screen}>
-      <Text style={{ textAlign: 'center' }}>{errored}</Text>
+      <Text style={articleListStyles.errorText}>{errored}</Text>
       <FlatList<Article>
         data={articles}
         refreshControl={
@@ -238,3 +268,13 @@ export default function ArticleListScreen(): React.ReactElement {
     </View>
   );
 }
+
+const articleListStyles = StyleSheet.create({
+  errorText: {
+    // backgroundColor: 'cyan',
+    color: 'black',
+    padding: 2,
+    fontSize: 12,
+    textAlign: 'center',
+  },
+});
