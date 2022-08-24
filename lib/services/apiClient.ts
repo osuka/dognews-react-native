@@ -1,4 +1,4 @@
-import 'react-native-url-polyfill/auto'; // see NOTES.md, prevents error URL.get Not Implemented
+// import 'react-native-url-polyfill/auto'; // see NOTES.md, prevents error URL.get Not Implemented
 import { ArticlesApi, Configuration } from '../generated/api_client';
 import { AxiosRequestConfig } from 'axios';
 import axios from 'axios';

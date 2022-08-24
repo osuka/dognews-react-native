@@ -51,10 +51,15 @@ export function Article({
     setCollapsed(!collapsed);
   };
 
-  const layoutAnimationDisappear = LayoutAnimation.create(60, 'easeOut', 'opacity');
+  const layoutAnimationDisappear = LayoutAnimation.create(
+    60,
+    'easeOut',
+    'opacity',
+  );
 
   const toggleRemoved = () => {
-    const currentUserRemovedIt = ArticleControl.getItemUserRating(articleContext, item) < 0;
+    const currentUserRemovedIt =
+      ArticleControl.getItemUserRating(articleContext, item) < 0;
     if (currentUserRemovedIt) {
       ArticleControl.rateItem(articleContext, item, 0);
     } else {
@@ -83,7 +88,8 @@ export function Article({
 
   const scale = (size: number) => (width / guidelineBaseWidth) * size;
   // const verticalScale = (size: number) => height / guidelineBaseHeight * size;
-  const moderateScale = (size: number, factor = 0.5) => size + (scale(size) - size) * factor;
+  const moderateScale = (size: number, factor = 0.5) =>
+    size + (scale(size) - size) * factor;
 
   const normalFontSize = 14;
   const smallFontSize = moderateScale(normalFontSize, -0.6);
@@ -103,7 +109,8 @@ export function Article({
         }}>
         <View style={{ flexDirection: 'row', padding: 2 }}>
           {rating >= 0 && item.thumbnail && (
-            <TouchableOpacity onPress={() => item.image && Linking.openURL(item.image)}>
+            <TouchableOpacity
+              onPress={() => item.image && Linking.openURL(item.image)}>
               <Image
                 style={{
                   width: IMAGE_SMALL_WIDTH,
@@ -112,14 +119,18 @@ export function Article({
                 source={{
                   uri: item.thumbnail?.startsWith('http')
                     ? item.thumbnail
-                    : 'https://dognewsserver.gatillos.com/media/' + item.thumbnail,
+                    : 'https://dognewsserver.gatillos.com/media/' +
+                      item.thumbnail,
                 }}
               />
             </TouchableOpacity>
           )}
           <Text
             style={{
-              color: rating < 0 ? Palette.disabledForeground : Palette.headingForeground,
+              color:
+                rating < 0
+                  ? Palette.disabledForeground
+                  : Palette.headingForeground,
               padding: 6,
               flex: 1,
               fontSize: rating < 0 ? smallFontSize : normalFontSize,
@@ -132,7 +143,11 @@ export function Article({
               fontSize: rating < 0 ? smallFontSize : normalFontSize,
             }}
             name={rating < 0 ? 'poo' : 'trash'}
-            color={rating < 0 ? Palette.disabledForeground : Palette.headingForeground}
+            color={
+              rating < 0
+                ? Palette.disabledForeground
+                : Palette.headingForeground
+            }
             backgroundColor="transparent"
             onPress={toggleRemoved}
           />
@@ -149,7 +164,8 @@ export function Article({
                       source={{
                         uri: item.thumbnail?.startsWith('http')
                           ? item.thumbnail
-                          : 'https://dognewsserver.gatillos.com/media/' + item.thumbnail,
+                          : 'https://dognewsserver.gatillos.com/media/' +
+                            item.thumbnail,
                       }}
                     />
                   </View>
@@ -164,7 +180,12 @@ export function Article({
                       padding: 6,
                       color: Palette.mainForeground,
                     }}>
-                    {fromString(item.summary || item.description || item.body || 'No summary')}
+                    {fromString(
+                      item.summary ||
+                        item.description ||
+                        item.body ||
+                        'No summary',
+                    )}
                   </Text>
                 </View>
               </View>
@@ -188,7 +209,10 @@ export function Article({
                 </Text>
               </Text>
             </TouchableOpacity>
-            <Rating rating={rating} onPress={() => ArticleControl.rateItem(articleContext, item)} />
+            <Rating
+              rating={rating}
+              onPress={() => ArticleControl.rateItem(articleContext, item)}
+            />
           </View>
         )}
       </View>

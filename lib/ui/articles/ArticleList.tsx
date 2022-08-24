@@ -5,11 +5,17 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import { Item } from '../../models/items';
 import { LoginContext, LoginContextType } from '../auth/Login';
 import { Article } from './Article';
-import { ArticleContext, ArticleContextType, ArticleControl } from './ArticleControl';
+import {
+  ArticleContext,
+  ArticleContextType,
+  ArticleControl,
+} from './ArticleControl';
 import { ArticleWebView } from './ArticleWebView';
 
 const ItemSeparator = () => {
-  return <View style={{ height: 2, width: '100%', backgroundColor: '#C8C8C8' }} />;
+  return (
+    <View style={{ height: 2, width: '100%', backgroundColor: '#C8C8C8' }} />
+  );
 };
 
 function ArticleListScreen({ navigation }) {
@@ -17,12 +23,16 @@ function ArticleListScreen({ navigation }) {
   const articleContext = useContext<ArticleContextType>(ArticleContext);
 
   const reload = () => {
-    (async () => await ArticleControl.fetchNews(articleContext, loginContext.loginStatus))();
+    (async () =>
+      await ArticleControl.fetchNews(
+        articleContext,
+        loginContext.loginStatus,
+      ))();
   };
 
   return (
     <ArticleContext.Consumer>
-      {(ctx) => (
+      {ctx => (
         <View>
           <Spinner
             visible={ctx.fetchingStatus}
@@ -31,7 +41,12 @@ function ArticleListScreen({ navigation }) {
           />
           <FlatList
             data={ctx.itemList}
-            refreshControl={<RefreshControl refreshing={ctx.fetchingStatus} onRefresh={reload} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={ctx.fetchingStatus}
+                onRefresh={reload}
+              />
+            }
             renderItem={({ item, index }: { item: Item; index: number }) => (
               <Article
                 key={item.id}
@@ -47,7 +62,7 @@ function ArticleListScreen({ navigation }) {
               />
             )}
             ItemSeparatorComponent={ItemSeparator}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
           />
         </View>
       )}

@@ -14,4 +14,8 @@ module.exports = {
       },
     }),
   },
+  // for selderee (html-to-text) we need cjs
+  resolver: {
+    sourceExts: ['js', 'json', 'ts', 'tsx', 'cjs'],
+  },
 };

@@ -1,13 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DrawerActions, NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -29,9 +19,9 @@ import ModerationScreen from './lib/ui/moderation/ModerationScreen';
 // TODO: importing images from typescript gets a bit bonkers, better way?
 const logo = require('./assets/onlydognews-logo-main.png');
 
-// opt-in javascript engine optimized for react native
-// https://reactnative.dev/docs/hermes
-declare const global: { HermesInternal: null | {} }; // needed so TS doesn't complain
+// // opt-in javascript engine optimized for react native
+// // https://reactnative.dev/docs/hermes
+// declare const global: { HermesInternal: null | {} }; // needed so TS doesn't complain
 
 // import 'react-native-gesture-handler'
 
@@ -107,9 +97,9 @@ export const App = () => {
       <NavigationContainer>
         <Drawer.Navigator
           initialRouteName="HomeNavigator"
-          drawerType="slide"
-          drawerContentOptions={{
-            labelStyle: {
+          screenOptions={{
+            drawerType: 'slide',
+            drawerLabelStyle: {
               fontSize: 24,
             },
           }}>

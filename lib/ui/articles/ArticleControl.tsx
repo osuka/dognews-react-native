@@ -1,11 +1,10 @@
 import React from 'react';
-import { createContext, useContext } from 'react';
 
 import { Item } from '../../models/items';
 import { ItemService } from '../../services/items';
 import { LoginState } from '../../models/login';
 import { LoginContext } from '../auth/Login';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const USER = 'osuka'; // TODO: retrieve user name from Login State
 
@@ -56,7 +55,7 @@ export const ArticleControl = {
       if (ctx.source === 'api') {
         filteredNews.forEach((item: Item) => {
           item.id = item.url;
-          item.url = item['target_url'];
+          item.url = item.url;
         });
       }
 
@@ -69,7 +68,7 @@ export const ArticleControl = {
 
       ctx.setItemList(newList);
     } catch (e) {
-      console.log("Error could not fetch", e);
+      console.log('Error could not fetch', e);
     } finally {
       ctx.setFetchingStatus(false);
     }
@@ -99,7 +98,14 @@ export const ArticleControl = {
   },
 
   removeItem(ctx: ArticleContextType, item: Item) {
-    ctx.setItemList([].concat(ctx.itemList.filter((value) => value.id !== item.id)));
+    let newList = [];
+    let lItem: Item;
+    for (lItem of ctx.itemList) {
+      if (lItem.id !== item.id) {
+        newList.push(lItem);
+      }
+    }
+    ctx.setItemList(newList);
   },
 
   async restoreFromStorage(prefix: string, ctx: ArticleContextType) {
@@ -125,45 +131,52 @@ export const ArticleControl = {
     }
   },
 
-  async fetchFeedNews(ctx: ArticleContextType, loginStatus: LoginState) {
-    if (ctx.fetchingStatus) {
-      // poor man's critical section
-      return;
-    }
+  // async fetchFeedNews(ctx: ArticleContextType, loginStatus: LoginState) {
+  //   if (ctx.fetchingStatus) {
+  //     // poor man's critical section
+  //     return;
+  //   }
 
-    try {
-      ctx.setFetchingStatus(true);
+  //   try {
+  //     ctx.setFetchingStatus(true);
 
-      const response = await fetch('https://onlydognews.com/latest-news.json');
+  //     const response = await fetch('https://onlydognews.com/latest-news.json');
 
-      if (response.status !== 200) {
-        const json = await response.json();
-        console.error(response.status, json);
-        return;
-      }
+  //     if (response.status !== 200) {
+  //       const json = await response.json();
+  //       console.error(response.status, json);
+  //       return;
+  //     }
 
-      const responseJson = await response.json(); // reads the body in full here
+  //     const responseJson = await response.json(); // reads the body in full here
 
-      // merge/add items
-      const existingIds: Array<string> = ctx.itemList.map((item: Item) => item.id);
+  //     // merge/add items
+  //     const existingIds: Array<string> = ctx.itemList.map((item: Item) => item.id);
 
-      const newList = responseJson
-        .filter((item: Item) => !existingIds.find((id) => item.id === id))
-        .concat(ctx.itemList);
+  //     const newList = responseJson
+  //       .filter((item: Item) => !existingIds.find((id) => item.id === id))
+  //       .concat(ctx.itemList);
 
-      ctx.setItemList(newList);
+  //     ctx.setItemList(newList);
 
-      if (!responseJson) {
-        // TODO: do something with this information
-        console.log('No news');
-        return;
-      }
-    } finally {
-      ctx.setFetchingStatus(false);
-    }
-  },
+  //     if (!responseJson) {
+  //       // TODO: do something with this information
+  //       console.log('No news');
+  //       return;
+  //     }
+  //   } finally {
+  //     ctx.setFetchingStatus(false);
+  //   }
+  // },
 };
 
 //
 
-export const ArticleContext = React.createContext<ArticleContextType>(undefined);
+export const ArticleContext = React.createContext<ArticleContextType>({
+  needsLoading: false,
+  itemList: [],
+  setItemList: (_) => undefined,
+  fetchingStatus: false,
+  setFetchingStatus: (_) => undefined,
+  source: '',
+});

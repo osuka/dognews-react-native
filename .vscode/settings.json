@@ -1,0 +1,11 @@
+{
+    "search.exclude": {
+        "**/.git": true,
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/tmp": true,
+        "Podfile.lock": true,
+        "package-lock.json": true,
+        "project.pbxproj": true
+    }
+}

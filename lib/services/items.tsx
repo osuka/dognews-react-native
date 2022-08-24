@@ -26,7 +26,9 @@ export const ItemService = {
       const art = articles[index];
       items.push({
         id: art.url || 'missing_id',
-        url: art.target_url || 'https://onlydognews.com/gfx/site/onlydognews-logo-main.png',
+        url:
+          art.target_url ||
+          'https://onlydognews.com/gfx/site/onlydognews-logo-main.png',
         title: art.title || 'Untitled',
         description: art.description,
         body: '',

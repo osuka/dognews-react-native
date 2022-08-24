@@ -231,16 +231,16 @@ export default function ArticleListScreen(): React.ReactElement {
   if (firstRun) {
     setFirstRun(false);
     async function initialize() {
-      try {
-        setErrored('');
-        await loadData(loading, setLoading, setArticles);
-      } catch (error) {
-        setErrored('Could not load articles (please try again later)\n' + error);
-        setTimeout(() => setErrored(''), 10000);
-        // TODO: add more detail, prettier display instead of just a Text
-        // Alert.alert('Could not fetch articles (Not connected to the internet?)');
-      } finally {
-      }
+      // try {
+      //   setErrored('');
+      //   await loadData(loading, setLoading, setArticles);
+      // } catch (error) {
+      //   setErrored('Could not load articles (please try again later)\n' + error);
+      //   setTimeout(() => setErrored(''), 10000);
+      //   // TODO: add more detail, prettier display instead of just a Text
+      //   // Alert.alert('Could not fetch articles (Not connected to the internet?)');
+      // } finally {
+      // }
     }
     initialize();
   }

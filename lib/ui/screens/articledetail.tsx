@@ -14,7 +14,10 @@ import { RootStackParamList } from '../Root';
 // Type validation for screens: https://reactnavigation.org/docs/typescript#type-checking-screens
 type RoutePropType = RouteProp<RootStackParamList, 'ArticleDetail'>;
 
-type NavigationPropType = StackNavigationProp<RootStackParamList, 'ArticleDetail'>;
+type NavigationPropType = StackNavigationProp<
+  RootStackParamList,
+  'ArticleDetail'
+>;
 
 type Props = {
   route: RoutePropType;
@@ -48,7 +51,7 @@ export function ArticleDetail({ route, navigation }: Props) {
   return (
     <View style={styles.mainContainer}>
       <WebView
-        ref={(ref) => (webView = ref)}
+        ref={ref => (webView = ref)}
         source={
           (article?.target_url && { uri: article.target_url }) || {
             html: '<h1>No item selected</h1>',
@@ -60,7 +63,7 @@ export function ArticleDetail({ route, navigation }: Props) {
         onLoadStart={() => setLoading(true)}
       />
       <View style={styles.buttonRow}>
-        {iconActions.map((action) => (
+        {iconActions.map(action => (
           <Icon.Button
             key={action.icon}
             iconStyle={styles.icons}
@@ -72,7 +75,9 @@ export function ArticleDetail({ route, navigation }: Props) {
         ))}
         {loading && <ActivityIndicator size="large" color="black" />}
         <View>
-          <Text style={styles.privacyText}>Privacy on: Browser will forget cookies</Text>
+          <Text style={styles.privacyText}>
+            Privacy on: Browser will forget cookies
+          </Text>
         </View>
       </View>
     </View>

@@ -26,7 +26,7 @@ import {
 
 import { authorize, refresh, revoke } from 'react-native-app-auth'; // oauth2
 import { Link } from '@react-navigation/native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { login } from '../../services/directauth';
 import { LoginState } from '../../models/login';
@@ -98,15 +98,17 @@ export const LoginScreen = ({ navigation }) => {
                 <TextInput
                   style={{ borderWidth: 1, width: '80%' }}
                   placeholder="Login"
-                  onChangeText={(text) => (loginStatus.username = text)}
+                  onChangeText={text => (loginStatus.username = text)}
                 />
                 <TextInput
                   style={{ borderWidth: 1, width: '80%' }}
                   placeholder="Password"
                   secureTextEntry={true}
-                  onChangeText={(text) => (loginStatus.password = text)}
+                  onChangeText={text => (loginStatus.password = text)}
                 />
-                {!!loginStatus.error && <Text style={styles.error}>{loginStatus.error}</Text>}
+                {!!loginStatus.error && (
+                  <Text style={styles.error}>{loginStatus.error}</Text>
+                )}
                 <View style={{ marginTop: 12 }}>
                   <Button
                     onPress={async () => {
@@ -148,18 +150,20 @@ export const LoginScreen = ({ navigation }) => {
 
   const OktaLoginHelp = ({ navigation }) => (
     <View>
-      <Text style={{ padding: 25, fontWeight: 'bold', fontSize: 24 }}>What is Okta?</Text>
+      <Text style={{ padding: 25, fontWeight: 'bold', fontSize: 24 }}>
+        What is Okta?
+      </Text>
       <Text style={{ paddingLeft: 50, paddingRight: 50 }}>
-        You can register and login using third party providers of user management. Okta is one of
-        them.
+        You can register and login using third party providers of user
+        management. Okta is one of them.
       </Text>
       <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
-        A third party Identity Provider store your personal details and helps us to ensure your data
-        is protected.
+        A third party Identity Provider store your personal details and helps us
+        to ensure your data is protected.
       </Text>
       <Text style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 20 }}>
-        You can use Okta as an identity provider in various applications, the same way you can
-        register using Google or Facebook.
+        You can use Okta as an identity provider in various applications, the
+        same way you can register using Google or Facebook.
       </Text>
       <Text
         onPress={() => navigation.goBack()}
@@ -221,7 +225,8 @@ export const LoginScreen = ({ navigation }) => {
           progress: false,
           accessToken: authState.accessToken || loginStatus.accessToken,
           accessTokenExpirationDate:
-            authState.accessTokenExpirationDate || loginStatus.accessTokenExpirationDate,
+            authState.accessTokenExpirationDate ||
+            loginStatus.accessTokenExpirationDate,
           refreshToken: authState.refreshToken || loginStatus.refreshToken,
         });
       } catch (error) {
@@ -260,13 +265,17 @@ export const LoginScreen = ({ navigation }) => {
     return (
       <LoginContext.Consumer>
         {({ loginStatus, setLoginStatus }) => (
-          <View style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }}>
-            <Image source={require('../../../assets/onlydognews-logo-main.png')} />
+          <View
+            style={{ alignItems: 'center', flex: 1, flexDirection: 'column' }}>
+            <Image
+              source={require('../../../assets/onlydognews-logo-main.png')}
+            />
             <View style={{ marginTop: 16 }}>
               <Button
                 onPress={() => initiateAuthorize(loginStatus, setLoginStatus)}
                 title="Login or register via Okta..."
-                color="#017CC0"></Button>
+                color="#017CC0"
+              />
             </View>
             <Text
               style={{
@@ -275,14 +284,18 @@ export const LoginScreen = ({ navigation }) => {
                 paddingRight: 30,
                 textAlign: 'center',
               }}>
-              You can help moderate and rank articles on Only Dog News by registering as a user and
-              requesting moderator access.
+              You can help moderate and rank articles on Only Dog News by
+              registering as a user and requesting moderator access.
             </Text>
             <Link to="/OktaLoginHelp" style={{ paddingTop: 16 }}>
-              <Text style={{ textDecorationLine: 'underline' }}>What is okta?</Text>
+              <Text style={{ textDecorationLine: 'underline' }}>
+                What is okta?
+              </Text>
             </Link>
             <Link to="/DirectLogin" style={{ paddingTop: 16 }}>
-              <Text style={{ textDecorationLine: 'underline' }}>Admin access</Text>
+              <Text style={{ textDecorationLine: 'underline' }}>
+                Admin access
+              </Text>
             </Link>
           </View>
         )}
@@ -293,7 +306,10 @@ export const LoginScreen = ({ navigation }) => {
   const Logout = () => (
     <LoginContext.Consumer>
       {({ setLoginStatus }) => (
-        <Button title="Logout" onPress={() => setLoginStatus({ username: '' } as LoginState)} />
+        <Button
+          title="Logout"
+          onPress={() => setLoginStatus({ username: '' } as LoginState)}
+        />
       )}
     </LoginContext.Consumer>
   );
@@ -301,7 +317,8 @@ export const LoginScreen = ({ navigation }) => {
   return (
     <LoginContext.Consumer>
       {
-        ({ loginStatus }) => (!!loginStatus.accessToken ? <Logout /> : <DirectLogin />)
+        ({ loginStatus }) =>
+          loginStatus.accessToken ? <Logout /> : <DirectLogin />
         // <Stack.Screen name="OktaLogin" component={OktaLoginScreen} />
         // <Stack.Screen
         //   name="DirectLogin"

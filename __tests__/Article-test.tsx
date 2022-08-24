@@ -1,22 +1,21 @@
-/**
- * @format
- */
-
 jest.mock('../lib/ui/auth/Login'); // TODO: proper
 
 import 'react-native';
-import { render } from '@testing-library/react-native'; // https://callstack.github.io/react-native-testing-library/docs/getting-started/
 import React from 'react';
 import { Article } from '../lib/ui/articles/Article';
 
 import { ArticleContext } from '../lib/ui/articles/ArticleControl';
+
+import renderer from 'react-test-renderer';
+
+jest.mock('../lib/ui/auth/Login'); // TODO: proper
 
 beforeEach(() => {
   jest.resetModules();
 });
 
 it('renders correctly', () => {
-  render(
+  renderer.create(
     <ArticleContext.Provider
       value={{
         itemList: [],

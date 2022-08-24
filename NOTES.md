@@ -3,6 +3,70 @@
 > A collection of notes for me and my future self
 ---
 
+## 2022-08-23 Upgrade all dependencies
+
+Since there's been quite a few changes, we start with a fresh project and copy from it:
+
+```bash
+npx react-native init onlydognewsapp --title "Only Dog News" --template react-native-template-typescript
+
+# the app there will be named com.onlydognewsapp but we want a subdomain
+npx react-native-rename -b com.onlydognews.checker
+
+# copy files
+rm -rf ios
+mv ../onlydognewsapp/ios .
+rm -rf ios
+mv ../onlydognewsapp/android .
+# adjust package
+mkdir -p android/app/src/main/java/com/onlydognews/checker/
+mv android/app/src/debug/java/com/onlydognewsapp/ReactNativeFlipper.java android/app/src/main/java/com/onlydognews/checker/
+
+# copy dependencies - this is a very manual and painful process of checking what is used now vs what we had
+# vim package.json
+
+# copy:
+cd ../onlydognews
+cp .eslintrc babel.config.js metro.config.js
+
+# tweaks
+# add in babel.config.js:
+    # // for selderee (from html-to-text)
+    # "@babel/plugin-transform-modules-commonjs"
+# and in metro.config.js:
+#  // for selderee (html-to-text) we need cjs
+#   resolver: {
+#     sourceExts: ['js', 'json', 'ts', 'tsx', 'cjs'],
+#   },
+
+
+# update nvmrc, we move to nodejs 18 which is the current release
+nvm i
+npm i
+
+# update with android studio the android version
+# upgrade to 31, latest platform tools etc
+# copy app/build.gradle and build.gradle
+# add to app/build.gradle
+  # add the following property to the defaultConfig in `android/app/build.gradle`:
+
+```bash
+android {
+  defaultConfig {
+    manifestPlaceholders = [
+      appAuthRedirectScheme: 'com.onlydognews.checker'
+    ]
+  }
+}
+```
+
+Check the tests
+
+```bash
+npx jest
+```
+
+
 ## 2021-08-13 Migrate openapi client generator
 
 https://github.com/OpenAPITools/openapi-generator/blob/master/docs/generators/typescript-axios.md

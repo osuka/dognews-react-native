@@ -1,5 +1,4 @@
 import React from 'react';
-import { StackNavigationProp } from '@react-navigation/stack';
 
 import { styles } from '../Root';
 import ReactNative from 'react-native';
@@ -16,10 +15,14 @@ export default function HomeScreen(): React.ReactElement {
       <ReactNative.View style={styles.sectionContainer}>
         <ReactNative.View style={styles.innerContainer}>
           <Link to="/Articles">
-            <ReactNative.Text style={styles.textLink}>Check Articles</ReactNative.Text>
+            <ReactNative.Text style={styles.textLink}>
+              Check Articles
+            </ReactNative.Text>
           </Link>
           <Link to="/Moderation">
-            <ReactNative.Text style={styles.textLink}>Access Moderation</ReactNative.Text>
+            <ReactNative.Text style={styles.textLink}>
+              Access Moderation
+            </ReactNative.Text>
           </Link>
         </ReactNative.View>
       </ReactNative.View>

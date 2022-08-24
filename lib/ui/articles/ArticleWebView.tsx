@@ -29,7 +29,7 @@ export function ArticleWebView({ route, navigation }) {
     <View style={{ flexDirection: 'column', flex: 1 }}>
       <Text>{item?.url || 'No url'}</Text>
       <WebView
-        ref={(ref) => (webView = ref)}
+        ref={ref => (webView = ref)}
         source={
           (item?.url && { uri: item.url }) || {
             html: '<h1>No item selected</h1>',
@@ -75,7 +75,9 @@ export function ArticleWebView({ route, navigation }) {
               iconStyle={{ marginRight: 0 }}
               name="stop"
               solid={!!rating}
-              color={rating ? Palette.warningForeground : Palette.mainForeground}
+              color={
+                rating ? Palette.warningForeground : Palette.mainForeground
+              }
               backgroundColor="transparent"
               onPress={() => webView.stopLoading()}
             />
@@ -85,7 +87,9 @@ export function ArticleWebView({ route, navigation }) {
               iconStyle={{ marginRight: 0 }}
               name="times"
               solid={!!rating}
-              color={rating ? Palette.warningForeground : Palette.mainForeground}
+              color={
+                rating ? Palette.warningForeground : Palette.mainForeground
+              }
               backgroundColor="transparent"
               onPress={() => navigation.goBack()}
             />
@@ -105,7 +109,8 @@ export function ArticleWebView({ route, navigation }) {
             solid={!!rating}
             color={rating ? Palette.warningForeground : Palette.mainForeground}
             backgroundColor="transparent"
-            onPress={() => ArticleControl.rateItem(articleContext, item)}></Icon.Button>
+            onPress={() => ArticleControl.rateItem(articleContext, item)}
+          />
           <Icon.Button
             name="trash"
             color={Palette.headingForeground}
@@ -121,7 +126,8 @@ export function ArticleWebView({ route, navigation }) {
               }
 
               navigation.goBack();
-            }}></Icon.Button>
+            }}
+          />
         </View>
       </View>
     </View>
